@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem e-NILAM Interaktif</title>
+    <title>Sistem e-NILAM Interaktif Vokasional & Teknikal</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -34,8 +34,14 @@
                 </div>
                 <div>
                     <h1 class="font-extrabold text-xl tracking-wide leading-none">e-NILAM Interaktif</h1>
-                    <p class="text-xs text-indigo-200 mt-1">Sistem Rekod & Analisis Bacaan Digital</p>
+                    <p class="text-xs text-indigo-200 mt-1">Sistem Rekod & Analisis Bacaan Digital (Cloud Sync)</p>
                 </div>
+            </div>
+
+            <!-- Status Cloud Sync Indicator -->
+            <div id="cloud-status" class="hidden md:flex items-center gap-2 bg-indigo-800/80 px-3 py-1.5 rounded-xl text-xs border border-indigo-500/40">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-indigo-100 font-medium" id="sync-text">Cloud Awan Aktif</span>
             </div>
 
             <!-- Profil User Atas (Papar bila dah log masuk) -->
@@ -66,7 +72,7 @@
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-slate-800">Selamat Datang</h2>
-                <p class="text-xs text-slate-500 mt-1">Sila pilih peranan anda untuk log masuk ke dalam sistem</p>
+                <p class="text-xs text-slate-500 mt-1">Sila pilih peranan anda untuk log masuk ke dalam sistem e-NILAM</p>
             </div>
 
             <!-- Tab Suis Peranan -->
@@ -105,7 +111,7 @@
                     Masuk Mod Pentadbir <i class="fa-solid fa-shield-halved"></i>
                 </button>
                 <div class="text-xs text-slate-400 text-center pt-2">
-                    Kata Laluan Demo: <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 font-semibold">admin123</span>
+                    Kata Laluan Admin: <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 font-semibold">admin123</span>
                 </div>
             </form>
         </section>
@@ -146,11 +152,11 @@
                         <div>
                             <span class="bg-indigo-500/40 text-indigo-100 text-xs font-semibold px-3 py-1 rounded-full border border-indigo-400/30">Pencapaian Semasa Saya</span>
                             <h2 id="std-dash-welcome" class="text-2xl font-extrabold mt-2">Selamat Datang Pelajar</h2>
-                            <p class="text-xs text-indigo-100 mt-1">Teruskan membaca buku NILAM untuk menambah mata & mengumpul bintang!</p>
+                            <p class="text-xs text-indigo-100 mt-1">Teruskan membaca buku NILAM dari rumah untuk menambah mata & mengumpul bintang!</p>
                         </div>
                         <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15">
                             <div class="text-center px-3 border-r border-white/20">
-                                <p class="text-[10px] text-indigo-200 uppercase tracking-wider font-semibold">Jumlah Mata/Poin 🏆</p>
+                                <p class="text-[10px] text-indigo-200 uppercase tracking-wider font-semibold">Jumlah Mata 🏆</p>
                                 <p id="std-dash-points" class="text-3xl font-black text-amber-300">0</p>
                             </div>
                             <div class="text-center px-3">
@@ -170,7 +176,7 @@
                             <i class="fa-solid fa-book"></i>
                         </div>
                         <div>
-                            <p class="text-xs font-medium text-slate-500">Jumlah Buku Dibaca</p>
+                            <p class="text-xs font-medium text-slate-500">Jumlah Buku Dibaca Saya</p>
                             <h3 id="std-dash-total-books" class="text-xl font-bold text-slate-800">0</h3>
                         </div>
                     </div>
@@ -244,7 +250,7 @@
                         <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
                             <i class="fa-solid fa-book-medical text-indigo-600"></i> Borang Rekod Bacaan Baharu
                         </h2>
-                        <p class="text-xs text-slate-500 mt-1">Sila isi maklumat buku yang telah dibaca. Setiap rekod menambah <strong>+10 Mata</strong> & <strong>+1 Bintang</strong>!</p>
+                        <p class="text-xs text-slate-500 mt-1">Sila isi maklumat buku yang telah dibaca dari rumah. Setiap rekod menambah <strong>+10 Mata</strong> & <strong>+1 Bintang</strong> secara automatik!</p>
                     </div>
 
                     <form id="form-new-book" onsubmit="handleSaveBook(event)" class="space-y-5">
@@ -288,8 +294,8 @@
 
                         <div class="flex justify-end gap-3 pt-4">
                             <button type="reset" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-xs hover:bg-slate-50 transition">Padam</button>
-                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-md transition flex items-center gap-2">
-                                <i class="fa-solid fa-bookmark"></i> Simpan & Peroleh Mata
+                            <button type="submit" id="btn-submit-book" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-md transition flex items-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Hantar Rekod Ke Awan
                             </button>
                         </div>
                     </form>
@@ -363,7 +369,7 @@
                 <!-- Koleksi Lencana (Badges) -->
                 <div class="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm">
                     <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-award text-amber-500"></i> Koleksi Lencana Pencapaian
+                        <i class="fa-solid fa-award text-amber-500"></i> Koleksi Lencana Pencapaian Digital
                     </h3>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="std-badges-container">
                         <!-- Dynamic Badges -->
@@ -403,7 +409,7 @@
                             <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
                                 <i class="fa-solid fa-tags text-indigo-600"></i> Pengurusan Kategori Pecahan Khas
                             </h3>
-                            <p class="text-xs text-slate-500">Tambah atau hapus kategori khas untuk kegunaan pendaftaran bacaan pelajar</p>
+                            <p class="text-xs text-slate-500">Tambah atau hapus kategori khas untuk pendaftaran bacaan pelajar di seluruh peranti</p>
                         </div>
                         <form onsubmit="handleAddCategory(event)" class="flex gap-2">
                             <input type="text" id="input-new-cat" placeholder="Tambah kategori..." required class="px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500">
@@ -421,7 +427,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
                         <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                            <i class="fa-solid fa-chart-pie text-indigo-600"></i> Agihan Kategori Khas Buku
+                            <i class="fa-solid fa-chart-pie text-indigo-600"></i> Agihan Kategori Khas Buku (Awan Realtime)
                         </h3>
                         <div class="h-64 relative">
                             <canvas id="chart-adm-categories"></canvas>
@@ -441,7 +447,7 @@
                 <!-- Monthly Analytics -->
                 <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
                     <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-chart-line text-indigo-600"></i> Rekod Keseluruhan Bacaan Bulanan System
+                        <i class="fa-solid fa-chart-line text-indigo-600"></i> Rekod Keseluruhan Bacaan Bulanan Sistem
                     </h3>
                     <div class="h-64 relative">
                         <canvas id="chart-adm-monthly"></canvas>
@@ -535,7 +541,7 @@
     <!-- FOOTER -->
     <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400">
-            &copy; 2026 e-NILAM Interaktif — Sistem Pengurusan Rekod Bacaan Digital
+            &copy; 2026 e-NILAM Interaktif — Sistem Pengurusan Rekod Bacaan Digital (Multi-Device Cloud)
         </div>
     </footer>
 
@@ -580,22 +586,14 @@
     </div>
 
 
-    <!-- LOGIK JAVASCRIPT -->
-    <script>
-        // ==========================================
-        // DATA DEFAULT & INITIALIZATION
-        // ==========================================
-        const DEFAULT_CATEGORIES = [
-            'Komputer', 
-            'Perladangan', 
-            'Elektrik', 
-            'Automotif', 
-            'Pembuat Pakaian', 
-            'Pengurusan', 
-            'Sains & Teknologi', 
-            'Umum'
-        ];
-        
+    <!-- FIREBASE & CORE SCRIPT MODULE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // APP STATE & CONSTANTS
+        const DEFAULT_CATEGORIES = ['Komputer', 'Perladangan', 'Elektrik', 'Automotif', 'Pembuat Pakaian', 'Pengurusan', 'Sains & Teknologi', 'Umum'];
         const DEFAULT_STUDENTS = [
             { id: 'KV001', name: 'Muhammad Amirul', class: '1 SVM KPD', points: 40, stars: 4 },
             { id: 'KV002', name: 'Nur Aisyah', class: '1 SVM KPD', points: 60, stars: 6 },
@@ -604,33 +602,49 @@
             { id: 'KV005', name: 'Tan Wei Ming', class: '2 DVM ETE', points: 20, stars: 2 }
         ];
 
-        const DEFAULT_BOOKS = [
-            { id: 'b1', studentId: 'KV001', title: 'Asas Pengaturcaraan Python', category: 'Komputer', language: 'Bahasa Melayu', pages: 150, author: 'Dr. Rosli', summary: 'Memahami asas sintaks Python dan pembolehubah.', date: '2026-02-10' },
-            { id: 'b2', studentId: 'KV001', title: 'Sistem Rangkaian LAN & WAN', category: 'Komputer', language: 'Bahasa Melayu', pages: 200, author: 'Eng. Khalid', summary: 'Konsep IP Address dan penyambungan router.', date: '2026-02-14' },
-            { id: 'b3', studentId: 'KV002', title: 'Teknologi Fertigasi Moden', category: 'Perladangan', language: 'Bahasa Melayu', pages: 110, author: 'Tan Sri Sulaiman', summary: 'Cara pengurusan air dan baja automasi tanaman.', date: '2026-01-20' },
-            { id: 'b4', studentId: 'KV004', title: 'Asas Pendawaian Elektrik Tiga Fasa', category: 'Elektrik', language: 'Bahasa Melayu', pages: 180, author: 'Ir. Azman', summary: 'Keselamatan dan litar elektrik industri.', date: '2026-02-01' }
-        ];
-
-        // Pembolehubah Keadaan (State)
-        let categories = [];
-        let students = [];
+        let categories = [...DEFAULT_CATEGORIES];
+        let students = [...DEFAULT_STUDENTS];
         let books = [];
-        let currentUser = null; // { role: 'student'|'admin', data: obj }
+        let currentUser = null;
+        let isFirebaseActive = false;
 
-        // Instance Chart.js
-        let chartStdCat = null;
-        let chartStdAvg = null;
-        let chartStdMonthly = null;
-        let chartAdmCat = null;
-        let chartAdmAvg = null;
-        let chartAdmMonthly = null;
+        let db = null;
+        let auth = null;
+        let appId = typeof __app_id !== 'undefined' ? __app_id : 'nilam-vokasional-app';
 
-        window.onload = function() {
-            loadDatabase();
-            initCharts();
-        };
+        // Chart instances
+        let chartStdCat = null, chartStdAvg = null, chartStdMonthly = null;
+        let chartAdmCat = null, chartAdmAvg = null, chartAdmMonthly = null;
 
-        function loadDatabase() {
+        // Initialize App & Firebase
+        async function initCloudSync() {
+            try {
+                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                    const firebaseConfig = JSON.parse(__firebase_config);
+                    const app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+
+                    isFirebaseActive = true;
+                    document.getElementById('cloud-status').classList.remove('hidden');
+                    setupRealtimeListeners();
+                } else {
+                    loadLocalFallback();
+                }
+            } catch (err) {
+                console.warn("Firestore error, switching to LocalStorage fallback:", err);
+                loadLocalFallback();
+            }
+        }
+
+        function loadLocalFallback() {
+            isFirebaseActive = false;
             const storedCats = localStorage.getItem('nilam_v2_categories');
             categories = storedCats ? JSON.parse(storedCats) : [...DEFAULT_CATEGORIES];
 
@@ -638,18 +652,81 @@
             students = storedStd ? JSON.parse(storedStd) : [...DEFAULT_STUDENTS];
 
             const storedBooks = localStorage.getItem('nilam_v2_books');
-            books = storedBooks ? JSON.parse(storedBooks) : [...DEFAULT_BOOKS];
+            books = storedBooks ? JSON.parse(storedBooks) : [];
 
-            saveDatabase();
+            document.getElementById('cloud-status').classList.remove('hidden');
+            document.getElementById('sync-text').innerText = "Mod Tempatan (Offline)";
+            document.getElementById('cloud-status').querySelector('span').className = "w-2.5 h-2.5 rounded-full bg-amber-400";
+            refreshUI();
         }
 
-        function saveDatabase() {
-            localStorage.setItem('nilam_v2_categories', JSON.stringify(categories));
-            localStorage.setItem('nilam_v2_students', JSON.stringify(students));
-            localStorage.setItem('nilam_v2_books', JSON.stringify(books));
+        // Realtime Firestore Sync
+        function setupRealtimeListeners() {
+            if (!db) return;
+
+            // 1. Sync Categories
+            const catDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'config', 'categories');
+            onSnapshot(catDocRef, (snapshot) => {
+                if (snapshot.exists() && snapshot.data().list) {
+                    categories = snapshot.data().list;
+                } else {
+                    setDoc(catDocRef, { list: DEFAULT_CATEGORIES });
+                }
+                populateCategoryDropdown();
+                if (currentUser && currentUser.role === 'admin') renderAdminPage2();
+            }, (err) => console.error(err));
+
+            // 2. Sync Students
+            const studentsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
+            onSnapshot(studentsColRef, (snapshot) => {
+                const cloudStudents = [];
+                snapshot.forEach(docSnap => cloudStudents.push(docSnap.data()));
+                
+                if (cloudStudents.length > 0) {
+                    students = cloudStudents;
+                } else {
+                    // Seed initial demo students
+                    DEFAULT_STUDENTS.forEach(s => {
+                        setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', s.id), s);
+                    });
+                }
+
+                // If currently logged in as student, refresh current user object
+                if (currentUser && currentUser.role === 'student') {
+                    const updatedMe = students.find(s => s.id === currentUser.data.id);
+                    if (updatedMe) currentUser.data = updatedMe;
+                }
+
+                refreshUI();
+            }, (err) => console.error(err));
+
+            // 3. Sync Books
+            const booksColRef = collection(db, 'artifacts', appId, 'public', 'data', 'books');
+            onSnapshot(booksColRef, (snapshot) => {
+                const cloudBooks = [];
+                snapshot.forEach(docSnap => cloudBooks.push(docSnap.data()));
+                books = cloudBooks;
+                refreshUI();
+            }, (err) => console.error(err));
         }
 
-        function showToast(message, type = 'success') {
+        function refreshUI() {
+            updateHeaderInfo();
+            if (currentUser) {
+                if (currentUser.role === 'student') {
+                    renderStudentDashboard();
+                    renderStudentLogs();
+                    renderStudentProfile();
+                } else {
+                    renderAdminPage2();
+                    renderAdminLeaderboard();
+                    renderAdminStudents();
+                }
+            }
+        }
+
+        // DOM UTILS
+        window.showToast = function(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             const bgClass = type === 'success' ? 'bg-emerald-600' : 'bg-red-600';
@@ -657,20 +734,15 @@
             toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> ${message}`;
             container.appendChild(toast);
 
-            setTimeout(() => {
-                toast.classList.remove('translate-y-2', 'opacity-0');
-            }, 10);
-
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
             setTimeout(() => {
                 toast.classList.add('opacity-0');
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
-        }
+        };
 
-        // ==========================================
-        // LOGIK LOG MASUK / LOG OUT
-        // ==========================================
-        function switchLoginTab(tab) {
+        // LOGIN HANDLERS
+        window.switchLoginTab = function(tab) {
             const stdBtn = document.getElementById('tab-btn-student');
             const admBtn = document.getElementById('tab-btn-admin');
             const stdForm = document.getElementById('form-student-login');
@@ -687,9 +759,9 @@
                 admForm.classList.remove('hidden');
                 stdForm.classList.add('hidden');
             }
-        }
+        };
 
-        function handleStudentLogin(e) {
+        window.handleStudentLogin = function(e) {
             e.preventDefault();
             const idInput = document.getElementById('input-student-id').value.trim().toUpperCase();
             const student = students.find(s => s.id.toUpperCase() === idInput);
@@ -703,13 +775,13 @@
                 updateHeaderInfo();
                 populateCategoryDropdown();
                 switchStudentPage(1);
-                showToast(`Selamat datang, ${student.name}!`);
+                window.showToast(`Selamat datang, ${student.name}!`);
             } else {
-                showToast("ID Pelajar tidak wujud! Sila semak ID anda.", "error");
+                window.showToast("ID Pelajar tidak wujud! Sila semak ID anda.", "error");
             }
-        }
+        };
 
-        function handleAdminLogin(e) {
+        window.handleAdminLogin = function(e) {
             e.preventDefault();
             const pass = document.getElementById('input-admin-pass').value;
             if (pass === 'admin123') {
@@ -720,13 +792,13 @@
 
                 updateHeaderInfo();
                 switchAdminPage(2);
-                showToast("Berjaya Log Masuk Mod Pentadbir!");
+                window.showToast("Berjaya Log Masuk Mod Pentadbir!");
             } else {
-                showToast("Kata Laluan Admin Salah!", "error");
+                window.showToast("Kata Laluan Admin Salah!", "error");
             }
-        }
+        };
 
-        function logout() {
+        window.logout = function() {
             currentUser = null;
             document.getElementById('header-user-info').classList.add('hidden');
             document.getElementById('module-student').classList.add('hidden');
@@ -734,8 +806,8 @@
             document.getElementById('view-login').classList.remove('hidden');
             document.getElementById('input-student-id').value = '';
             document.getElementById('input-admin-pass').value = '';
-            showToast("Anda telah keluar daripada sistem.");
-        }
+            window.showToast("Anda telah keluar daripada sistem.");
+        };
 
         function updateHeaderInfo() {
             if (!currentUser) return;
@@ -751,10 +823,8 @@
             }
         }
 
-        // ==========================================
-        // MOD PELAJAR - HALAMAN & LOGIK
-        // ==========================================
-        function switchStudentPage(pageNum) {
+        // STUDENT NAVIGATION
+        window.switchStudentPage = function(pageNum) {
             for (let i = 1; i <= 4; i++) {
                 document.getElementById(`student-page-${i}`).classList.add('hidden');
                 const navBtn = document.getElementById(`std-nav-${i}`);
@@ -770,7 +840,7 @@
             if (pageNum === 1) renderStudentDashboard();
             if (pageNum === 3) renderStudentLogs();
             if (pageNum === 4) renderStudentProfile();
-        }
+        };
 
         function populateCategoryDropdown() {
             const select = document.getElementById('book-category');
@@ -791,7 +861,6 @@
             const activeStudentIds = new Set(books.map(b => b.studentId));
             document.getElementById('std-dash-active-students').innerText = activeStudentIds.size;
 
-            // Kategori Terbanyak
             const catCounts = {};
             books.forEach(b => catCounts[b.category] = (catCounts[b.category] || 0) + 1);
             let topCat = '-';
@@ -801,7 +870,6 @@
             }
             document.getElementById('std-dash-top-cat').innerText = topCat;
 
-            // Purata Kelas
             const classStudents = students.filter(s => s.class === std.class);
             const classStudentIds = classStudents.map(s => s.id);
             const classBooks = books.filter(b => classStudentIds.includes(b.studentId));
@@ -811,12 +879,17 @@
             updateChartsData();
         }
 
-        function handleSaveBook(e) {
+        window.handleSaveBook = async function(e) {
             e.preventDefault();
             if (!currentUser || currentUser.role !== 'student') return;
 
+            const btnSubmit = document.getElementById('btn-submit-book');
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Menghantar...`;
+
+            const bookId = 'b_' + Date.now();
             const newBook = {
-                id: 'b' + Date.now(),
+                id: bookId,
                 studentId: currentUser.data.id,
                 title: document.getElementById('book-title').value,
                 category: document.getElementById('book-category').value,
@@ -827,23 +900,39 @@
                 date: new Date().toISOString().split('T')[0]
             };
 
-            books.push(newBook);
+            const newPoints = currentUser.data.points + 10;
+            const newStars = currentUser.data.stars + 1;
 
-            // Tambah +10 Mata & +1 Bintang
-            const studentIdx = students.findIndex(s => s.id === currentUser.data.id);
-            if (studentIdx !== -1) {
-                students[studentIdx].points += 10;
-                students[studentIdx].stars += 1;
-                currentUser.data = students[studentIdx];
+            if (isFirebaseActive && db) {
+                try {
+                    // Save book document
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'books', bookId), newBook);
+                    // Update student points in cloud
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentUser.data.id), {
+                        points: newPoints,
+                        stars: newStars
+                    });
+                } catch (err) {
+                    console.error("Cloud save failed:", err);
+                }
+            } else {
+                books.push(newBook);
+                const sIdx = students.findIndex(s => s.id === currentUser.data.id);
+                if (sIdx !== -1) {
+                    students[sIdx].points = newPoints;
+                    students[sIdx].stars = newStars;
+                }
+                localStorage.setItem('nilam_v2_books', JSON.stringify(books));
+                localStorage.setItem('nilam_v2_students', JSON.stringify(students));
             }
 
-            saveDatabase();
-            updateHeaderInfo();
-            document.getElementById('form-new-book').reset();
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Hantar Rekod Ke Awan`;
 
-            showToast("Buku berjaya disimpan! Tahniah, +10 Mata & +1 Bintang ditambah! 🌟");
+            document.getElementById('form-new-book').reset();
+            window.showToast("Buku berjaya dihantar ke Awan! Tahniah +10 Mata & +1 Bintang! 🌟");
             switchStudentPage(3);
-        }
+        };
 
         function renderStudentLogs(filter = '') {
             if (!currentUser || currentUser.role !== 'student') return;
@@ -875,9 +964,9 @@
             `).join('');
         }
 
-        function filterStudentLogs(val) {
+        window.filterStudentLogs = function(val) {
             renderStudentLogs(val);
-        }
+        };
 
         function renderStudentProfile() {
             if (!currentUser || currentUser.role !== 'student') return;
@@ -910,10 +999,8 @@
             `).join('');
         }
 
-        // ==========================================
-        // MOD ADMIN - HALAMAN & LOGIK
-        // ==========================================
-        function switchAdminPage(pageNum) {
+        // ADMIN NAVIGATION & FUNCTIONS
+        window.switchAdminPage = function(pageNum) {
             for (let i = 2; i <= 4; i++) {
                 document.getElementById(`admin-page-${i}`).classList.add('hidden');
                 const navBtn = document.getElementById(`adm-nav-${i}`);
@@ -927,7 +1014,7 @@
             if (pageNum === 2) renderAdminPage2();
             if (pageNum === 3) renderAdminLeaderboard();
             if (pageNum === 4) renderAdminStudents();
-        }
+        };
 
         function renderAdminPage2() {
             const tagContainer = document.getElementById('admin-cat-tags');
@@ -941,27 +1028,35 @@
             updateChartsData();
         }
 
-        function handleAddCategory(e) {
+        window.handleAddCategory = async function(e) {
             e.preventDefault();
             const input = document.getElementById('input-new-cat');
             const val = input.value.trim();
             if (val && !categories.includes(val)) {
                 categories.push(val);
-                saveDatabase();
+                if (isFirebaseActive && db) {
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'categories'), { list: categories });
+                } else {
+                    localStorage.setItem('nilam_v2_categories', JSON.stringify(categories));
+                    renderAdminPage2();
+                }
                 populateCategoryDropdown();
-                renderAdminPage2();
                 input.value = '';
-                showToast(`Kategori "${val}" berjaya ditambah!`);
+                window.showToast(`Kategori "${val}" berjaya ditambah!`);
             }
-        }
+        };
 
-        function deleteCategory(cat) {
+        window.deleteCategory = async function(cat) {
             categories = categories.filter(c => c !== cat);
-            saveDatabase();
+            if (isFirebaseActive && db) {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'categories'), { list: categories });
+            } else {
+                localStorage.setItem('nilam_v2_categories', JSON.stringify(categories));
+                renderAdminPage2();
+            }
             populateCategoryDropdown();
-            renderAdminPage2();
-            showToast(`Kategori "${cat}" telah dipadam.`);
-        }
+            window.showToast(`Kategori "${cat}" telah dipadam.`);
+        };
 
         function renderAdminLeaderboard() {
             const sorted = [...students].sort((a, b) => b.stars - a.stars || b.points - a.points);
@@ -1024,7 +1119,7 @@
             }).join('');
         }
 
-        function renderAdminStudents() {
+        window.renderAdminStudents = function() {
             const selectFilter = document.getElementById('filter-admin-class');
             const classes = [...new Set(students.map(s => s.class))];
             const currentSelected = selectFilter.value;
@@ -1057,9 +1152,9 @@
                     </td>
                 </tr>
             `).join('');
-        }
+        };
 
-        function openAddStudentModal() {
+        window.openAddStudentModal = function() {
             document.getElementById('modal-student-title').innerText = "Tambah Pelajar Baharu";
             document.getElementById('modal-std-is-edit').value = "false";
             document.getElementById('modal-std-id').value = "";
@@ -1069,9 +1164,9 @@
             document.getElementById('modal-std-points').value = "0";
             document.getElementById('modal-std-stars').value = "0";
             document.getElementById('modal-student').classList.remove('hidden');
-        }
+        };
 
-        function openEditStudentModal(id) {
+        window.openEditStudentModal = function(id) {
             const std = students.find(s => s.id === id);
             if (!std) return;
 
@@ -1084,13 +1179,13 @@
             document.getElementById('modal-std-points').value = std.points;
             document.getElementById('modal-std-stars').value = std.stars;
             document.getElementById('modal-student').classList.remove('hidden');
-        }
+        };
 
-        function closeStudentModal() {
+        window.closeStudentModal = function() {
             document.getElementById('modal-student').classList.add('hidden');
-        }
+        };
 
-        function handleSaveStudent(e) {
+        window.handleSaveStudent = async function(e) {
             e.preventDefault();
             const isEdit = document.getElementById('modal-std-is-edit').value === "true";
             const id = document.getElementById('modal-std-id').value.trim().toUpperCase();
@@ -1099,40 +1194,45 @@
             const points = parseInt(document.getElementById('modal-std-points').value);
             const stars = parseInt(document.getElementById('modal-std-stars').value);
 
-            if (isEdit) {
-                const idx = students.findIndex(s => s.id === id);
-                if (idx !== -1) {
-                    students[idx] = { id, name, class: sClass, points, stars };
-                    showToast("Data pelajar berjaya dikemaskini!");
-                }
+            const studentObj = { id, name, class: sClass, points, stars };
+
+            if (isFirebaseActive && db) {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id), studentObj);
             } else {
-                if (students.some(s => s.id === id)) {
-                    showToast("ID Pelajar telah wujud!", "error");
-                    return;
+                if (isEdit) {
+                    const idx = students.findIndex(s => s.id === id);
+                    if (idx !== -1) students[idx] = studentObj;
+                } else {
+                    if (students.some(s => s.id === id)) {
+                        window.showToast("ID Pelajar telah wujud!", "error");
+                        return;
+                    }
+                    students.push(studentObj);
                 }
-                students.push({ id, name, class: sClass, points, stars });
-                showToast("Pelajar baru berjaya didaftarkan!");
-            }
-
-            saveDatabase();
-            closeStudentModal();
-            renderAdminStudents();
-        }
-
-        function deleteStudent(id) {
-            if (confirm("Adakah anda pasti mahu memadam profil pelajar ini?")) {
-                students = students.filter(s => s.id !== id);
-                books = books.filter(b => b.studentId !== id);
-                saveDatabase();
+                localStorage.setItem('nilam_v2_students', JSON.stringify(students));
                 renderAdminStudents();
-                showToast("Profil pelajar telah dipadam.");
             }
-        }
 
+            closeStudentModal();
+            window.showToast("Data pelajar berjaya disimpan ke Awan!");
+        };
 
-        // ==========================================
-        // CARTA & VISUALISASI DATA (CHART.JS)
-        // ==========================================
+        window.deleteStudent = async function(id) {
+            if (confirm("Adakah anda pasti mahu memadam profil pelajar ini?")) {
+                if (isFirebaseActive && db) {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id));
+                } else {
+                    students = students.filter(s => s.id !== id);
+                    books = books.filter(b => b.studentId !== id);
+                    localStorage.setItem('nilam_v2_students', JSON.stringify(students));
+                    localStorage.setItem('nilam_v2_books', JSON.stringify(books));
+                    renderAdminStudents();
+                }
+                window.showToast("Profil pelajar telah dipadam.");
+            }
+        };
+
+        // CHARTS SETUP
         function initCharts() {
             const donutOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } };
             const barOpts = { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } };
@@ -1151,7 +1251,6 @@
         function updateChartsData() {
             if (!chartStdCat) return;
 
-            // Kategori Data
             const catCounts = {};
             categories.forEach(c => catCounts[c] = 0);
             books.forEach(b => {
@@ -1168,7 +1267,6 @@
             chartAdmCat.data.datasets[0].data = catData;
             chartAdmCat.update();
 
-            // Purata Kelas Data
             const classList = [...new Set(students.map(s => s.class))];
             const classAvgData = classList.map(c => {
                 const stdsInClass = students.filter(s => s.class === c);
@@ -1185,6 +1283,11 @@
             chartAdmAvg.data.datasets[0].data = classAvgData;
             chartAdmAvg.update();
         }
+
+        window.onload = function() {
+            initCharts();
+            initCloudSync();
+        };
     </script>
 </body>
 </html>
