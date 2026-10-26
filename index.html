@@ -161,4 +161,737 @@
                                 <div class="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-base"><i class="fa-solid fa-wheat-awn"></i></div>
                                 <div>
                                     <div class="text-[10px] text-slate-400 font-bold uppercase">PERLADANGAN</div>
-                                    <div id="countPerladangan"
+                                    <div id="countPerladangan" class="text-base font-extrabold text-slate-800">0</div>
+                                </div>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-3">
+                                <div class="w-9 h-9 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center text-base"><i class="fa-solid fa-bolt"></i></div>
+                                <div>
+                                    <div class="text-[10px] text-slate-400 font-bold uppercase">ELEKTRIK</div>
+                                    <div id="countElektrik" class="text-base font-extrabold text-slate-800">0</div>
+                                </div>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 flex items-center space-x-3">
+                                <div class="w-9 h-9 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-base"><i class="fa-solid fa-book"></i></div>
+                                <div>
+                                    <div class="text-[10px] text-slate-400 font-bold uppercase">LAIN-LAIN</div>
+                                    <div id="countLain" class="text-base font-extrabold text-slate-800">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Carta Visual -->
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                        <h3 class="text-xs font-bold text-slate-700 mb-3">Carta Kategori Buku</h3>
+                        <div class="h-44 flex justify-center">
+                            <canvas id="catChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Purata Bacaan Mengikut Kelas -->
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Purata Bacaan Mengikut Kelas</h3>
+                            <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-bold">Analisis Kelas</span>
+                        </div>
+                        <div id="classAvgContainer" class="space-y-2"></div>
+                    </div>
+                </div>
+
+                <!-- PAGE 2: REKOD KESELURUHAN BULANAN (ADMIN) / BORANG BACAAN (STUDENT) -->
+                <div id="page2" class="hidden space-y-4">
+                    <!-- Mod Admin Page 2: Rekod Bulanan & Murid Aktif -->
+                    <div id="adminPage2Content" class="hidden space-y-4">
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Rekod Keseluruhan Mengikut Bulan</h3>
+                                <i class="fa-solid fa-calendar-days text-indigo-500 text-xs"></i>
+                            </div>
+                            <p class="text-[11px] text-slate-500">Jumlah bacaan dan bilangan murid yang aktif membaca bagi setiap bulan.</p>
+                            <div id="monthlyReportContainer" class="space-y-2 pt-2"></div>
+                        </div>
+                    </div>
+
+                    <!-- Mod Student Page 2: Borang Rekod Bacaan Baharu -->
+                    <div id="studentPage2Content" class="hidden space-y-4">
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                            <div class="flex items-center space-x-2 mb-4 pb-2 border-b">
+                                <i class="fa-solid fa-square-plus text-indigo-600 text-lg"></i>
+                                <h2 class="text-sm font-bold text-slate-800">Borang Rekod Bacaan Baharu</h2>
+                            </div>
+                            <form onsubmit="saveRecord(event)" class="space-y-3 text-xs">
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Tajuk Buku</label>
+                                    <input type="text" id="recTitle" required placeholder="Contoh: Asas Pengaturcaraan" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Kategori Khas Buku</label>
+                                    <select id="recCategory" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <option value="COMPUTER">💻 COMPUTER</option>
+                                        <option value="PERLADANGAN">🌱 PERLADANGAN</option>
+                                        <option value="ELEKTRIK">⚡ ELEKTRIK</option>
+                                        <option value="LAIN-LAIN">📚 LAIN-LAIN</option>
+                                    </select>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="block font-bold text-slate-700 mb-1">Bahasa</label>
+                                        <select id="recLang" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
+                                            <option value="Bahasa Melayu">Bahasa Melayu</option>
+                                            <option value="Bahasa Inggeris">Bahasa Inggeris</option>
+                                            <option value="Lain-lain">Lain-lain</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block font-bold text-slate-700 mb-1">Muka Surat</label>
+                                        <input type="number" id="recPages" min="1" required placeholder="Bil. M/S" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Nama Pengarang</label>
+                                    <input type="text" id="recAuthor" required placeholder="Nama pengarang" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Rumusan / Pengajaran</label>
+                                    <textarea id="recSummary" rows="3" required placeholder="Tuliskan ringkasan buku..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                                </div>
+                                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-3 rounded-xl text-xs transition shadow-md flex items-center justify-center space-x-1">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                    <span>Hantar Rekod Bacaan</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE 3: KEDUDUKAN PEMENANG (ADMIN) / SENARAI LOG BACAAN (STUDENT) -->
+                <div id="page3" class="hidden space-y-4">
+                    <!-- Mod Admin Page 3: Carta Kedudukan Leaderboard Murid & Pengesahan Rekod -->
+                    <div id="adminPage3Content" class="hidden space-y-4">
+                        <!-- Papan Pemenang Emoji -->
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                            <div class="flex justify-between items-center pb-2 border-b">
+                                <h3 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Carta Kedudukan Murid Aktif</h3>
+                                <span class="text-[10px] bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded-full"><i class="fa-solid fa-trophy mr-1"></i>Pemenang NILAM</span>
+                            </div>
+                            <div id="leaderboardContainer" class="space-y-2"></div>
+                        </div>
+
+                        <!-- Pengesahan Rekod Bacaan -->
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                            <h3 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Pengesahan Rekod Bacaan Pelajar</h3>
+                            <div id="adminApprovalListContainer" class="space-y-2"></div>
+                        </div>
+                    </div>
+
+                    <!-- Mod Student Page 3: Senarai Log Bacaan -->
+                    <div id="studentPage3Content" class="hidden space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Senarai Log Bacaan Saya</h2>
+                            <span id="logCountBadge" class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">0 Rekod</span>
+                        </div>
+                        <div id="logCardsContainer" class="space-y-2"></div>
+                    </div>
+                </div>
+
+                <!-- PAGE 4: PENGURUSAN PROFIL PELAJAR MENGIKUT KELAS -->
+                <div id="page4" class="hidden space-y-4">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center pb-2 border-b">
+                            <div>
+                                <h2 class="text-sm font-bold text-slate-800">Pengurusan Profil Pelajar Mengikut Kelas</h2>
+                                <p class="text-[10px] text-slate-400">Senarai mengikut kategori kelas berdaftar</p>
+                            </div>
+                            <button id="btnAddStudentNav" onclick="openAddStudentModal()" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-xl shadow transition">
+                                <i class="fa-solid fa-user-plus mr-1"></i> Tambah
+                            </button>
+                        </div>
+                        <div id="studentByClassContainer" class="space-y-4"></div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Bottom Navigation Bar (4 Pages) -->
+        <nav id="bottomNav" class="hidden absolute bottom-0 inset-x-0 bg-white border-t border-slate-200 flex justify-around py-2 px-1 shadow-lg z-40">
+            <button onclick="switchPage(1)" id="navPage1" class="flex flex-col items-center text-indigo-600 transition">
+                <i class="fa-solid fa-chart-pie text-base"></i>
+                <span id="navText1" class="text-[10px] font-bold mt-0.5">Page 1</span>
+            </button>
+            <button onclick="switchPage(2)" id="navPage2" class="flex flex-col items-center text-slate-400 hover:text-indigo-600 transition">
+                <i id="navIcon2" class="fa-solid fa-circle-plus text-base"></i>
+                <span id="navText2" class="text-[10px] font-bold mt-0.5">Page 2</span>
+            </button>
+            <button onclick="switchPage(3)" id="navPage3" class="flex flex-col items-center text-slate-400 hover:text-indigo-600 transition">
+                <i id="navIcon3" class="fa-solid fa-book-open text-base"></i>
+                <span id="navText3" class="text-[10px] font-bold mt-0.5">Page 3</span>
+            </button>
+            <button onclick="switchPage(4)" id="navPage4" class="flex flex-col items-center text-slate-400 hover:text-indigo-600 transition">
+                <i class="fa-solid fa-id-card-clip text-base"></i>
+                <span id="navText4" class="text-[10px] font-bold mt-0.5">Page 4</span>
+            </button>
+        </nav>
+
+        <!-- MODAL EDIT/ADD STUDENT -->
+        <div id="editModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl max-w-xs w-full p-5 shadow-2xl space-y-4">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <h3 id="modalStudentTitle" class="text-sm font-bold text-slate-800">Sunting Profil Pelajar</h3>
+                    <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 text-sm"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form onsubmit="saveStudentForm(event)" class="space-y-3 text-xs">
+                    <input type="hidden" id="editOriginalId">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">ID Pelajar / ID NILAM</label>
+                        <input type="text" id="editStudentId" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-indigo-700">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Nama Pelajar</label>
+                        <input type="text" id="editStudentName" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Kelas</label>
+                        <input type="text" id="editStudentClass" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div class="flex justify-end space-x-2 pt-2">
+                        <button type="button" onclick="closeEditModal()" class="px-3 py-1.5 border rounded-lg text-slate-600 font-bold">Batal</button>
+                        <button type="submit" class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-bold shadow">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script Logik Utama -->
+    <script>
+        let defaultStudents = [
+            { id: 'S001', name: 'Ahmad Zaki', class: '5 Alfa', school: 'SK Seri Utama' },
+            { id: 'S002', name: 'Siti Nurhaliza', class: '5 Beta', school: 'SK Seri Utama' },
+            { id: 'S003', name: 'Chong Wei', class: '4 Gamma', school: 'SK Seri Utama' }
+        ];
+
+        let defaultRecords = [
+            { id: 1, studentId: 'S001', title: 'Asas Pengaturcaraan Python', category: 'COMPUTER', lang: 'Bahasa Melayu', author: 'Dr. Rosli', pages: 120, summary: 'Belajar pembolehubah dan sintaks.', status: 'Approved', date: '2026-03-15' },
+            { id: 2, studentId: 'S001', title: 'Panduan Kebun Sawit', category: 'PERLADANGAN', lang: 'Bahasa Melayu', author: 'Ahmad Bakar', pages: 85, summary: 'Teknik baja dan penuaian.', status: 'Approved', date: '2026-03-18' },
+            { id: 3, studentId: 'S002', title: 'Basic Litar Elektrik', category: 'ELEKTRIK', lang: 'Bahasa Inggeris', author: 'John Doe', pages: 95, summary: 'Litar bersiri dan selari.', status: 'Pending', date: '2026-04-02' }
+        ];
+
+        let students = JSON.parse(localStorage.getItem('nilam_pwa_students'));
+        if (!students || students.length === 0) {
+            students = defaultStudents;
+            localStorage.setItem('nilam_pwa_students', JSON.stringify(students));
+        }
+
+        let records = JSON.parse(localStorage.getItem('nilam_pwa_records'));
+        if (!records) {
+            records = defaultRecords;
+            localStorage.setItem('nilam_pwa_records', JSON.stringify(records));
+        }
+
+        let currentUser = null;
+        let deferredPrompt;
+
+        // PWA Offline Support
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                self.addEventListener('install', e => self.skipWaiting());
+                self.addEventListener('activate', e => self.clients.claim());
+                self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => new Response('Offline'))));
+            `;
+            const blob = new Blob([swCode], {type: 'application/javascript'});
+            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('pwaInstallBanner').classList.remove('hidden');
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => {
+                    document.getElementById('pwaInstallBanner').classList.add('hidden');
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('nilam_pwa_students', JSON.stringify(students));
+            localStorage.setItem('nilam_pwa_records', JSON.stringify(records));
+        }
+
+        function switchLoginTab(type) {
+            document.getElementById('studentLoginForm').classList.toggle('hidden', type !== 'student');
+            document.getElementById('adminLoginForm').classList.toggle('hidden', type !== 'admin');
+            document.getElementById('tabStudent').className = type === 'student' ? 'w-1/2 py-2 text-xs font-bold rounded-lg transition bg-white text-indigo-700 shadow-sm' : 'w-1/2 py-2 text-xs font-bold rounded-lg transition text-slate-500';
+            document.getElementById('tabAdmin').className = type === 'admin' ? 'w-1/2 py-2 text-xs font-bold rounded-lg transition bg-slate-800 text-white shadow-sm' : 'w-1/2 py-2 text-xs font-bold rounded-lg transition text-slate-500';
+        }
+
+        function handleStudentLogin(e) {
+            e.preventDefault();
+            const id = document.getElementById('inputStudentId').value.trim();
+            const student = students.find(s => s.id.toLowerCase() === id.toLowerCase());
+            if (student) {
+                currentUser = { role: 'student', data: student };
+                initApp();
+            } else {
+                alert('ID Pelajar tidak dijumpai dalam sistem!');
+            }
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('inputAdminPass').value;
+            if (pass === 'admin123') {
+                currentUser = { role: 'admin', data: { name: 'Admin / GPM' } };
+                initApp();
+            } else {
+                alert('Kata laluan admin salah!');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('appContent').classList.add('hidden');
+            document.getElementById('userInfoHeader').classList.add('hidden');
+            document.getElementById('bottomNav').classList.add('hidden');
+            document.getElementById('bottomNav').classList.remove('flex');
+        }
+
+        function initApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('appContent').classList.remove('hidden');
+            document.getElementById('userInfoHeader').classList.remove('hidden');
+            document.getElementById('bottomNav').classList.remove('hidden');
+            document.getElementById('bottomNav').classList.add('flex');
+
+            const isAdmin = currentUser.role === 'admin';
+            document.getElementById('roleBadge').textContent = isAdmin ? 'ADMIN' : 'PELAJAR';
+
+            // Penyesuaian Nama & Icon Navigasi mengikut Peranan
+            if (isAdmin) {
+                document.getElementById('navText1').textContent = 'Utama';
+                document.getElementById('navText2').textContent = 'Bulanan';
+                document.getElementById('navIcon2').className = 'fa-solid fa-calendar-days text-base';
+                document.getElementById('navText3').textContent = 'Kedudukan';
+                document.getElementById('navIcon3').className = 'fa-solid fa-trophy text-base';
+                document.getElementById('navText4').textContent = 'Profil';
+                document.getElementById('btnAddStudentNav').classList.remove('hidden');
+
+                document.getElementById('adminPage2Content').classList.remove('hidden');
+                document.getElementById('studentPage2Content').classList.add('hidden');
+                document.getElementById('adminPage3Content').classList.remove('hidden');
+                document.getElementById('studentPage3Content').classList.add('hidden');
+            } else {
+                document.getElementById('navText1').textContent = 'Utama';
+                document.getElementById('navText2').textContent = 'Tambah';
+                document.getElementById('navIcon2').className = 'fa-solid fa-circle-plus text-base';
+                document.getElementById('navText3').textContent = 'Log';
+                document.getElementById('navIcon3').className = 'fa-solid fa-book-open text-base';
+                document.getElementById('navText4').textContent = 'Profil';
+                document.getElementById('btnAddStudentNav').classList.add('hidden');
+
+                document.getElementById('adminPage2Content').classList.add('hidden');
+                document.getElementById('studentPage2Content').classList.remove('hidden');
+                document.getElementById('adminPage3Content').classList.add('hidden');
+                document.getElementById('studentPage3Content').classList.remove('hidden');
+            }
+
+            switchPage(1);
+        }
+
+        function switchPage(pageNum) {
+            [1, 2, 3, 4].forEach(p => {
+                const pageEl = document.getElementById('page' + p);
+                const navBtn = document.getElementById('navPage' + p);
+                if (pageEl) pageEl.classList.add('hidden');
+                if (navBtn) {
+                    navBtn.classList.remove('text-indigo-600');
+                    navBtn.classList.add('text-slate-400');
+                }
+            });
+
+            document.getElementById('page' + pageNum).classList.remove('hidden');
+            const activeNav = document.getElementById('navPage' + pageNum);
+            if (activeNav) {
+                activeNav.classList.remove('text-slate-400');
+                activeNav.classList.add('text-indigo-600');
+            }
+
+            // Kemaskini Data apabila berpindah page
+            if (pageNum === 1) renderPage1();
+            if (pageNum === 2 && currentUser.role === 'admin') renderMonthlyReport();
+            if (pageNum === 3) {
+                if (currentUser.role === 'admin') renderAdminPage3();
+                else renderStudentPage3();
+            }
+            if (pageNum === 4) renderPage4StudentsByClass();
+        }
+
+        function calculateStarAndPoints(approvedCount) {
+            const points = approvedCount * 10;
+            let stars = 0;
+            if (approvedCount >= 120) stars = 5;
+            else if (approvedCount >= 90) stars = 4;
+            else if (approvedCount >= 60) stars = 3;
+            else if (approvedCount >= 30) stars = 2;
+            else if (approvedCount >= 10) stars = 1;
+
+            return { points, stars };
+        }
+
+        // PAGE 1 RENDER
+        function renderPage1() {
+            const isAdmin = currentUser.role === 'admin';
+            const userRecords = isAdmin ? records : records.filter(r => r.studentId === currentUser.data.id);
+            const approvedRecords = userRecords.filter(r => r.status === 'Approved');
+            
+            const { points, stars } = calculateStarAndPoints(approvedRecords.length);
+
+            document.getElementById('dashTitle').textContent = isAdmin ? 'Dashboard Pentadbir' : currentUser.data.name;
+            document.getElementById('dashSub').textContent = isAdmin ? `Jumlah Keseluruhan Rekod: ${records.length}` : `ID: ${currentUser.data.id} | ${currentUser.data.class}`;
+            document.getElementById('dashPoints').textContent = `${points} pts`;
+
+            // Star Icons
+            document.getElementById('starText').textContent = stars > 0 ? `Penarafan: ${stars} Bintang` : 'Belum Ada Bintang';
+            let starHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                starHtml += `<i class="fa-${i <= stars ? 'solid' : 'regular'} fa-star"></i>`;
+            }
+            document.getElementById('starIcons').innerHTML = starHtml;
+
+            // Kategori Counts
+            const catCounts = { COMPUTER: 0, PERLADANGAN: 0, ELEKTRIK: 0, 'LAIN-LAIN': 0 };
+            userRecords.forEach(r => {
+                if (catCounts[r.category] !== undefined) catCounts[r.category]++;
+            });
+
+            document.getElementById('countComputer').textContent = catCounts.COMPUTER;
+            document.getElementById('countPerladangan').textContent = catCounts.PERLADANGAN;
+            document.getElementById('countElektrik').textContent = catCounts.ELEKTRIK;
+            document.getElementById('countLain').textContent = catCounts['LAIN-LAIN'];
+
+            renderCharts(catCounts);
+            renderClassAverages();
+        }
+
+        let catChartObj;
+        function renderCharts(catCounts) {
+            if (catChartObj) catChartObj.destroy();
+            catChartObj = new Chart(document.getElementById('catChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(catCounts),
+                    datasets: [{
+                        data: Object.values(catCounts),
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+            });
+        }
+
+        function renderClassAverages() {
+            const container = document.getElementById('classAvgContainer');
+            const classData = {};
+
+            students.forEach(s => {
+                if (!classData[s.class]) classData[s.class] = { studentCount: 0, totalReadings: 0 };
+                classData[s.class].studentCount++;
+            });
+
+            records.forEach(r => {
+                const student = students.find(s => s.id === r.studentId);
+                if (student && classData[student.class]) {
+                    classData[student.class].totalReadings++;
+                }
+            });
+
+            const html = Object.keys(classData).map(cName => {
+                const info = classData[cName];
+                const avg = info.studentCount > 0 ? (info.totalReadings / info.studentCount).toFixed(1) : 0;
+                return `
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs font-bold text-slate-700">
+                            <span>Kelas ${cName} <span class="text-[10px] text-slate-400 font-normal">(${info.studentCount} Murid)</span></span>
+                            <span class="text-indigo-600">${avg} Buku / Murid</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                            <div class="bg-indigo-600 h-full rounded-full" style="width: ${Math.min(avg * 10, 100)}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html || '<p class="text-xs text-slate-400">Tiada data kelas.</p>';
+        }
+
+        // PAGE 2 (ADMIN): MONTHLY REPORT
+        function renderMonthlyReport() {
+            const container = document.getElementById('monthlyReportContainer');
+            const monthlyData = {};
+
+            records.forEach(r => {
+                const dateObj = new Date(r.date || Date.now());
+                const monthKey = dateObj.toLocaleString('ms-MY', { month: 'short', year: 'numeric' });
+                
+                if (!monthlyData[monthKey]) monthlyData[monthKey] = { total: 0, activeStudents: new Set() };
+                monthlyData[monthKey].total++;
+                monthlyData[monthKey].activeStudents.add(r.studentId);
+            });
+
+            const html = Object.keys(monthlyData).map(mKey => {
+                const m = monthlyData[mKey];
+                return `
+                    <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs">
+                        <div>
+                            <div class="font-bold text-slate-800 text-sm">${mKey}</div>
+                            <div class="text-[10px] text-slate-500"><i class="fa-solid fa-users mr-1"></i>${m.activeStudents.size} Murid Membaca</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-extrabold text-indigo-600 text-sm">${m.total} Rekod</div>
+                            <div class="text-[9px] text-slate-400">Keseluruhan Buku</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html || '<p class="text-xs text-slate-400">Tiada rekod bulanan.</p>';
+        }
+
+        // PAGE 2 (STUDENT): SAVE RECORD
+        function saveRecord(e) {
+            e.preventDefault();
+            const today = new Date().toISOString().split('T')[0];
+            const newRec = {
+                id: Date.now(),
+                studentId: currentUser.data.id,
+                title: document.getElementById('recTitle').value,
+                category: document.getElementById('recCategory').value,
+                lang: document.getElementById('recLang').value,
+                author: document.getElementById('recAuthor').value,
+                pages: document.getElementById('recPages').value,
+                summary: document.getElementById('recSummary').value,
+                status: 'Pending',
+                date: today
+            };
+
+            records.push(newRec);
+            saveState();
+            alert('Rekod NILAM berjaya disimpan!');
+            e.target.reset();
+            switchPage(3);
+        }
+
+        // PAGE 3 (ADMIN): LEADERBOARD & APPROVAL
+        function renderAdminPage3() {
+            // Leaderboard Generation
+            const lbContainer = document.getElementById('leaderboardContainer');
+            const studentStats = students.map(s => {
+                const approvedCount = records.filter(r => r.studentId === s.id && r.status === 'Approved').length;
+                const { points, stars } = calculateStarAndPoints(approvedCount);
+                return { ...s, approvedCount, points, stars };
+            });
+
+            // Sort Highest Approved Count
+            studentStats.sort((a, b) => b.approvedCount - a.approvedCount);
+
+            const rankEmojis = ['🥇', '🥈', '🥉'];
+            lbContainer.innerHTML = studentStats.map((s, idx) => {
+                const medal = idx < 3 ? rankEmojis[idx] : `<span class="font-bold text-slate-400 text-xs">#${idx + 1}</span>`;
+                return `
+                    <div class="flex justify-between items-center p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+                        <div class="flex items-center space-x-2.5">
+                            <span class="text-base">${medal}</span>
+                            <div>
+                                <div class="font-bold text-slate-800">${s.name}</div>
+                                <div class="text-[10px] text-slate-400">${s.class} • ${s.approvedCount} Buku Disahkan</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-black text-indigo-600 text-xs">${s.points} pts</div>
+                            <div class="text-[9px] text-amber-500 font-bold">${s.stars} ⭐</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Admin Approval List
+            const appContainer = document.getElementById('adminApprovalListContainer');
+            const pendingRecords = records.filter(r => r.status === 'Pending');
+
+            appContainer.innerHTML = pendingRecords.map(r => {
+                const student = students.find(s => s.id === r.studentId) || { name: 'Murid' };
+                return `
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2 text-xs">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-slate-800">${r.title}</h4>
+                                <p class="text-[10px] text-slate-500">Oleh ${r.author} • ${student.name} (${student.class})</p>
+                            </div>
+                            <span class="bg-amber-100 text-amber-700 text-[9px] font-bold px-2 py-0.5 rounded-full">Menunggu</span>
+                        </div>
+                        <p class="text-slate-600 text-[10px] italic bg-white p-2 rounded border">"${r.summary}"</p>
+                        <div class="flex justify-end space-x-2 pt-1">
+                            <button onclick="approveRecord(${r.id})" class="bg-green-600 text-white text-[10px] px-3 py-1 rounded-lg font-bold">Sahkan (+10 Mata)</button>
+                            <button onclick="deleteRecord(${r.id})" class="bg-red-500 text-white text-[10px] px-3 py-1 rounded-lg font-bold">Tolak</button>
+                        </div>
+                    </div>
+                `;
+            }).join('') || '<p class="text-xs text-slate-400 text-center py-2">Tiada permohonan pengesahan baharu.</p>';
+        }
+
+        // PAGE 3 (STUDENT): LOG LIST
+        function renderStudentPage3() {
+            const container = document.getElementById('logCardsContainer');
+            const displayData = records.filter(r => r.studentId === currentUser.data.id);
+
+            document.getElementById('logCountBadge').textContent = `${displayData.length} Rekod`;
+
+            container.innerHTML = displayData.map(r => `
+                <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 space-y-2 text-xs">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm leading-snug">${r.title}</h4>
+                            <p class="text-[10px] text-slate-400">Oleh ${r.author}</p>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${r.status === 'Approved' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">
+                            ${r.status === 'Approved' ? 'Disahkan' : 'Menunggu'}
+                        </span>
+                    </div>
+                    <div class="flex space-x-2 text-[10px]">
+                        <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-bold">${r.category}</span>
+                        <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md">${r.lang}</span>
+                        <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md">${r.pages} m/s</span>
+                    </div>
+                    <p class="text-slate-600 text-[11px] bg-slate-50 p-2 rounded-lg italic">"${r.summary}"</p>
+                </div>
+            `).join('') || '<div class="text-center py-6 text-slate-400 text-xs">Tiada rekod bacaan ditemui.</div>';
+        }
+
+        function approveRecord(id) {
+            const r = records.find(item => item.id === id);
+            if (r) { 
+                r.status = 'Approved'; 
+                saveState(); 
+                renderAdminPage3(); 
+                renderPage1(); 
+            }
+        }
+
+        function deleteRecord(id) {
+            if (confirm('Padam rekod ini?')) {
+                records = records.filter(r => r.id !== id);
+                saveState();
+                if (currentUser.role === 'admin') renderAdminPage3();
+                else renderStudentPage3();
+            }
+        }
+
+        // PAGE 4: PENGURUSAN PROFIL PELAJAR MENGIKUT KELAS
+        function renderPage4StudentsByClass() {
+            const container = document.getElementById('studentByClassContainer');
+            const isAdmin = currentUser.role === 'admin';
+
+            // Kelompokkan Pelajar Mengikut Kelas
+            const grouped = {};
+            students.forEach(s => {
+                if (!grouped[s.class]) grouped[s.class] = [];
+                grouped[s.class].push(s);
+            });
+
+            const html = Object.keys(grouped).map(cName => {
+                const list = grouped[cName];
+                return `
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-xs font-bold text-indigo-700 bg-indigo-50 p-2 rounded-xl">
+                            <span><i class="fa-solid fa-users-rectangle mr-1.5"></i>Kelas ${cName}</span>
+                            <span class="text-[10px] bg-indigo-200 px-2 py-0.5 rounded-full">${list.length} Murid</span>
+                        </div>
+                        <div class="space-y-1.5 pl-1">
+                            ${list.map(s => `
+                                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
+                                    <div>
+                                        <div class="font-bold text-slate-800">${s.name}</div>
+                                        <div class="text-[10px] text-slate-400">ID Pelajar: <span class="font-bold text-indigo-600">${s.id}</span></div>
+                                    </div>
+                                    ${isAdmin ? `
+                                        <button onclick="openEditModal('${s.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg shadow">
+                                            <i class="fa-solid fa-pen mr-1"></i> Edit
+                                        </button>
+                                    ` : `
+                                        <span class="text-[10px] text-slate-400 italic">${s.school}</span>
+                                    `}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html || '<p class="text-xs text-slate-400">Tiada pelajar berdaftar.</p>';
+        }
+
+        function openAddStudentModal() {
+            document.getElementById('modalStudentTitle').textContent = 'Tambah Pelajar Baharu';
+            document.getElementById('editOriginalId').value = '';
+            document.getElementById('editStudentId').value = '';
+            document.getElementById('editStudentName').value = '';
+            document.getElementById('editStudentClass').value = '';
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        function openEditModal(studentId) {
+            const s = students.find(item => item.id === studentId);
+            if (s) {
+                document.getElementById('modalStudentTitle').textContent = 'Sunting Profil Pelajar';
+                document.getElementById('editOriginalId').value = s.id;
+                document.getElementById('editStudentId').value = s.id;
+                document.getElementById('editStudentName').value = s.name;
+                document.getElementById('editStudentClass').value = s.class;
+                document.getElementById('editModal').classList.remove('hidden');
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        function saveStudentForm(e) {
+            e.preventDefault();
+            const origId = document.getElementById('editOriginalId').value;
+            const newId = document.getElementById('editStudentId').value.trim();
+            const newName = document.getElementById('editStudentName').value.trim();
+            const newClass = document.getElementById('editStudentClass').value.trim();
+
+            if (origId) {
+                const student = students.find(s => s.id === origId);
+                if (student) {
+                    student.id = newId;
+                    student.name = newName;
+                    student.class = newClass;
+
+                    // Update ID pada rekod bacaan lama
+                    records.forEach(r => {
+                        if (r.studentId === origId) r.studentId = newId;
+                    });
+                }
+            } else {
+                students.push({ id: newId, name: newName, class: newClass, school: 'SK Seri Utama' });
+            }
+
+            saveState();
+            closeEditModal();
+            renderPage4StudentsByClass();
+            alert('Maklumat profil pelajar berjaya disimpan!');
+        }
+    </script>
+</body>
+</html>
