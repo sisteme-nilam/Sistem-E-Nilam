@@ -1,1293 +1,199 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem e-NILAM Interaktif Vokasional & Teknikal</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .star-glow {
-            filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem e-NILAM Sekolah</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body class="bg-gray-100 min-h-screen text-gray-800">
 
-    <!-- Toast Container -->
-    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
+  <!-- NAVIGATION -->
+  <nav class="bg-indigo-700 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <i class="fa-solid fa-book-bookmark text-yellow-400 text-2xl"></i>
+        <h1 class="font-bold text-xl tracking-wide">e-NILAM</h1>
+      </div>
+      <div id="userInfo" class="text-sm font-medium bg-indigo-800 px-3 py-1 rounded-full hidden">
+        <span id="displayUser"></span>
+      </div>
+    </div>
+  </nav>
 
-    <!-- HEADER / BAR NAVIGASI ATAS -->
-    <header class="bg-indigo-700 text-white shadow-lg sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="bg-white/10 p-2.5 rounded-xl backdrop-blur-md">
-                    <i class="fa-solid fa-book-open-reader text-2xl text-amber-300"></i>
-                </div>
-                <div>
-                    <h1 class="font-extrabold text-xl tracking-wide leading-none">e-NILAM Interaktif</h1>
-                    <p class="text-xs text-indigo-200 mt-1">Sistem Rekod & Analisis Bacaan Digital (Cloud Sync)</p>
-                </div>
-            </div>
+  <div class="max-w-4xl mx-auto p-4 sm:p-6">
 
-            <!-- Status Cloud Sync Indicator -->
-            <div id="cloud-status" class="hidden md:flex items-center gap-2 bg-indigo-800/80 px-3 py-1.5 rounded-xl text-xs border border-indigo-500/40">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span class="text-indigo-100 font-medium" id="sync-text">Cloud Awan Aktif</span>
-            </div>
-
-            <!-- Profil User Atas (Papar bila dah log masuk) -->
-            <div id="header-user-info" class="hidden flex items-center gap-4">
-                <div class="text-right hidden sm:block">
-                    <p id="header-user-name" class="font-semibold text-sm text-white">Nama Pelajar</p>
-                    <p id="header-user-class" class="text-xs text-indigo-200">Kelas</p>
-                </div>
-                <div id="header-badge" class="bg-amber-400 text-indigo-950 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow star-glow">
-                    <i class="fa-solid fa-star text-amber-700"></i> <span id="header-user-stars">0</span> Bintang
-                </div>
-                <button onclick="logout()" class="bg-red-500/80 hover:bg-red-600 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-right-from-bracket"></i> Keluar
-                </button>
-            </div>
+    <!-- LOGIN SCREEN -->
+    <div id="pageLogin" class="bg-white rounded-xl shadow-md p-6 max-w-md mx-auto my-12">
+      <h2 class="text-2xl font-bold text-center text-indigo-700 mb-6">Log Masuk Pelajar</h2>
+      
+      <form id="formLogin" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">ID Pelajar</label>
+          <input type="text" id="loginId" required placeholder="Contoh: KV001" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none uppercase">
         </div>
-    </header>
-
-    <!-- KANDUNGAN UTAMA -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
-
-        <!-- ========================================== -->
-        <!-- SKRIN LOG MASUK (LOGIN VIEW)               -->
-        <!-- ========================================== -->
-        <section id="view-login" class="max-w-md mx-auto my-10 bg-white rounded-3xl shadow-xl p-8 border border-slate-100">
-            <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3 text-3xl shadow-inner">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-slate-800">Selamat Datang</h2>
-                <p class="text-xs text-slate-500 mt-1">Sila pilih peranan anda untuk log masuk ke dalam sistem e-NILAM</p>
-            </div>
-
-            <!-- Tab Suis Peranan -->
-            <div class="flex bg-slate-100 p-1.5 rounded-2xl mb-6">
-                <button id="tab-btn-student" onclick="switchLoginTab('student')" class="flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition bg-white shadow-sm text-indigo-600">Pelajar</button>
-                <button id="tab-btn-admin" onclick="switchLoginTab('admin')" class="flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-500 hover:text-slate-800 transition">Pentadbir (Admin)</button>
-            </div>
-
-            <!-- Borang Log Masuk Pelajar (ID Pelajar Sahaja) -->
-            <form id="form-student-login" onsubmit="handleStudentLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">ID Pelajar / Angka Giliran</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400"><i class="fa-solid fa-id-card"></i></span>
-                        <input type="text" id="input-student-id" placeholder="Masukkan ID (Contoh: KV001)" required class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition text-sm uppercase">
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-lg shadow-indigo-200 transition text-sm flex items-center justify-center gap-2">
-                    Masuk Mod Pelajar <i class="fa-solid fa-arrow-right"></i>
-                </button>
-                <div class="text-xs text-slate-400 text-center pt-2">
-                    Contoh ID Demo: <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 font-semibold">KV001</span>, <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 font-semibold">KV002</span>, <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 font-semibold">KV003</span>
-                </div>
-            </form>
-
-            <!-- Borang Log Masuk Admin (Password Sahaja) -->
-            <form id="form-admin-login" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Kata Laluan Pentadbir</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400"><i class="fa-solid fa-lock"></i></span>
-                        <input type="password" id="input-admin-pass" placeholder="Masukkan Kata Laluan Admin" required class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition text-sm">
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 rounded-xl shadow-lg transition text-sm flex items-center justify-center gap-2">
-                    Masuk Mod Pentadbir <i class="fa-solid fa-shield-halved"></i>
-                </button>
-                <div class="text-xs text-slate-400 text-center pt-2">
-                    Kata Laluan Admin: <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 font-semibold">admin123</span>
-                </div>
-            </form>
-        </section>
-
-
-        <!-- ========================================== -->
-        <!-- MOD PELAJAR (STUDENT MODULE)              -->
-        <!-- ========================================== -->
-        <div id="module-student" class="hidden">
-
-            <!-- Navigasi Tab Pelajar -->
-            <nav class="flex justify-between items-center mb-6 bg-white p-2 rounded-2xl shadow-sm border border-slate-200/80 overflow-x-auto">
-                <button onclick="switchStudentPage(1)" id="std-nav-1" class="flex-1 min-w-[120px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition bg-indigo-50 text-indigo-700">
-                    <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center">1</span> Laman Utama
-                </button>
-                <div class="h-4 w-[1px] bg-slate-200"></div>
-                <button onclick="switchStudentPage(2)" id="std-nav-2" class="flex-1 min-w-[120px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition text-slate-500 hover:bg-slate-50">
-                    <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 text-xs flex items-center justify-center">2</span> Rekod Baru
-                </button>
-                <div class="h-4 w-[1px] bg-slate-200"></div>
-                <button onclick="switchStudentPage(3)" id="std-nav-3" class="flex-1 min-w-[120px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition text-slate-500 hover:bg-slate-50">
-                    <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 text-xs flex items-center justify-center">3</span> Log Bacaan
-                </button>
-                <div class="h-4 w-[1px] bg-slate-200"></div>
-                <button onclick="switchStudentPage(4)" id="std-nav-4" class="flex-1 min-w-[120px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition text-slate-500 hover:bg-slate-50">
-                    <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 text-xs flex items-center justify-center">4</span> Profil Pelajar
-                </button>
-            </nav>
-
-            <!-- PAGE 1 PELAJAR: DASHBOARD & STATISTIK -->
-            <div id="student-page-1" class="space-y-6">
-                <!-- Highlight Kad Pencapaian Pelajar -->
-                <div class="bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
-                    <div class="absolute right-0 bottom-0 opacity-10 translate-x-4 translate-y-4">
-                        <i class="fa-solid fa-award text-9xl"></i>
-                    </div>
-                    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                            <span class="bg-indigo-500/40 text-indigo-100 text-xs font-semibold px-3 py-1 rounded-full border border-indigo-400/30">Pencapaian Semasa Saya</span>
-                            <h2 id="std-dash-welcome" class="text-2xl font-extrabold mt-2">Selamat Datang Pelajar</h2>
-                            <p class="text-xs text-indigo-100 mt-1">Teruskan membaca buku NILAM dari rumah untuk menambah mata & mengumpul bintang!</p>
-                        </div>
-                        <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15">
-                            <div class="text-center px-3 border-r border-white/20">
-                                <p class="text-[10px] text-indigo-200 uppercase tracking-wider font-semibold">Jumlah Mata 🏆</p>
-                                <p id="std-dash-points" class="text-3xl font-black text-amber-300">0</p>
-                            </div>
-                            <div class="text-center px-3">
-                                <p class="text-[10px] text-indigo-200 uppercase tracking-wider font-semibold">Bintang ⭐️</p>
-                                <div class="flex items-center justify-center gap-1 text-2xl text-amber-300 font-black star-glow">
-                                    <i class="fa-solid fa-star text-xl"></i> <span id="std-dash-stars">0</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Kad Statistik Ringkas -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
-                            <i class="fa-solid fa-book"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-medium text-slate-500">Jumlah Buku Dibaca Saya</p>
-                            <h3 id="std-dash-total-books" class="text-xl font-bold text-slate-800">0</h3>
-                        </div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
-                            <i class="fa-solid fa-users"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-medium text-slate-500">Jumlah Pelajar Membaca</p>
-                            <h3 id="std-dash-active-students" class="text-xl font-bold text-slate-800">0</h3>
-                        </div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
-                            <i class="fa-solid fa-wrench"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-medium text-slate-500">Kategori Khas Terbanyak</p>
-                            <h3 id="std-dash-top-cat" class="text-sm font-bold text-slate-800 truncate max-w-[130px]">-</h3>
-                        </div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
-                            <i class="fa-solid fa-chart-line"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-medium text-slate-500">Purata Bacaan Kelas</p>
-                            <h3 id="std-dash-class-avg" class="text-xl font-bold text-slate-800">0 Buku</h3>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section Carta -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Carta 1: Kategori Khas -->
-                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                        <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                            <i class="fa-solid fa-chart-pie text-indigo-600"></i> Agihan Kategori Khas Buku
-                        </h3>
-                        <div class="h-64 relative">
-                            <canvas id="chart-std-categories"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Carta 2: Purata Bacaan Mengikut Kelas -->
-                    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                        <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                            <i class="fa-solid fa-chart-column text-indigo-600"></i> Purata Jumlah Pecahan Bacaan Mengikut Kelas
-                        </h3>
-                        <div class="h-64 relative">
-                            <canvas id="chart-std-class-avg"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Carta Bulanan -->
-                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-chart-line text-indigo-600"></i> Rekod Keseluruhan Bacaan Mengikut Bulan
-                    </h3>
-                    <div class="h-64 relative">
-                        <canvas id="chart-std-monthly"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PAGE 2 PELAJAR: BORANG REKOD BACAAN BAHARU -->
-            <div id="student-page-2" class="hidden">
-                <div class="max-w-3xl mx-auto bg-white rounded-3xl shadow-sm border border-slate-100 p-6 md:p-8">
-                    <div class="border-b border-slate-100 pb-4 mb-6">
-                        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-book-medical text-indigo-600"></i> Borang Rekod Bacaan Baharu
-                        </h2>
-                        <p class="text-xs text-slate-500 mt-1">Sila isi maklumat buku yang telah dibaca dari rumah. Setiap rekod menambah <strong>+10 Mata</strong> & <strong>+1 Bintang</strong> secara automatik!</p>
-                    </div>
-
-                    <form id="form-new-book" onsubmit="handleSaveBook(event)" class="space-y-5">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div class="md:col-span-2">
-                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tajuk Buku <span class="text-red-500">*</span></label>
-                                <input type="text" id="book-title" placeholder="Contoh: Pengenalan Kepada Autokad & Lukisan Teknik" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Kategori Khas Buku <span class="text-red-500">*</span></label>
-                                <select id="book-category" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm bg-white">
-                                    <!-- Dynamic Options -->
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Bahasa <span class="text-red-500">*</span></label>
-                                <select id="book-language" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm bg-white">
-                                    <option value="Bahasa Melayu">Bahasa Melayu</option>
-                                    <option value="Bahasa Inggeris">Bahasa Inggeris</option>
-                                    <option value="Lain-lain">Lain-lain</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Jumlah Muka Surat <span class="text-red-500">*</span></label>
-                                <input type="number" id="book-pages" min="1" placeholder="Contoh: 150" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nama Pengarang <span class="text-red-500">*</span></label>
-                                <input type="text" id="book-author" placeholder="Contoh: Dr. Ir. Azman" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Rumusan / Pengajaran <span class="text-red-500">*</span></label>
-                            <textarea id="book-summary" rows="4" placeholder="Tulis ringkasan atau pengajaran penting yang anda peroleh daripada buku ini..." required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none text-sm"></textarea>
-                        </div>
-
-                        <div class="flex justify-end gap-3 pt-4">
-                            <button type="reset" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-xs hover:bg-slate-50 transition">Padam</button>
-                            <button type="submit" id="btn-submit-book" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-md transition flex items-center gap-2">
-                                <i class="fa-solid fa-cloud-arrow-up"></i> Hantar Rekod Ke Awan
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- PAGE 3 PELAJAR: SENARAI LOG BACAAN -->
-            <div id="student-page-3" class="hidden space-y-4">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-                    <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-indigo-600"></i> Senarai Rekod Log Bacaan Saya
-                    </h2>
-                    <div class="relative max-w-xs">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fa-solid fa-magnifying-glass text-xs"></i></span>
-                        <input type="text" onkeyup="filterStudentLogs(this.value)" placeholder="Cari tajuk / kategori..." class="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                </div>
-
-                <!-- Jadual Log Bacaan -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs sm:text-sm">
-                            <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 font-semibold uppercase">
-                                <tr>
-                                    <th class="p-4">Tarikh</th>
-                                    <th class="p-4">Tajuk Buku</th>
-                                    <th class="p-4">Kategori Khas</th>
-                                    <th class="p-4">Bahasa</th>
-                                    <th class="p-4">Muka Surat</th>
-                                    <th class="p-4">Pengarang</th>
-                                    <th class="p-4">Rumusan</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-student-logs" class="divide-y divide-slate-100">
-                                <!-- Dynamic Rows -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="empty-student-logs" class="hidden p-8 text-center text-slate-400">
-                        <i class="fa-regular fa-folder-open text-4xl mb-2"></i>
-                        <p class="text-xs">Tiada rekod bacaan dijumpai. Mulakan membaca hari ini!</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PAGE 4 PELAJAR: PROFIL PELAJAR -->
-            <div id="student-page-4" class="hidden max-w-4xl mx-auto space-y-6">
-                <div class="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm flex flex-col sm:flex-row items-center gap-6">
-                    <div class="w-24 h-24 bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center text-white text-4xl shadow-md font-extrabold">
-                        <span id="std-prof-avatar">P</span>
-                    </div>
-                    <div class="text-center sm:text-left flex-grow">
-                        <h2 id="std-prof-name" class="text-2xl font-bold text-slate-800">Nama Pelajar</h2>
-                        <div class="flex flex-wrap justify-center sm:justify-start gap-2 mt-2">
-                            <span id="std-prof-id" class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold">ID: -</span>
-                            <span id="std-prof-class" class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold">Kelas: -</span>
-                        </div>
-                    </div>
-                    <div class="flex gap-6 border-t sm:border-t-0 sm:border-l border-slate-100 pt-4 sm:pt-0 sm:pl-6 text-center">
-                        <div>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Mata / Poin 🏆</p>
-                            <p id="std-prof-points" class="text-2xl font-black text-indigo-600">0</p>
-                        </div>
-                        <div>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Bintang ⭐️</p>
-                            <p id="std-prof-stars" class="text-2xl font-black text-amber-500 flex items-center gap-1 justify-center"><i class="fa-solid fa-star text-sm"></i> <span>0</span></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Koleksi Lencana (Badges) -->
-                <div class="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm">
-                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-award text-amber-500"></i> Koleksi Lencana Pencapaian Digital
-                    </h3>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="std-badges-container">
-                        <!-- Dynamic Badges -->
-                    </div>
-                </div>
-            </div>
-
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nama Pelajar</label>
+          <input type="text" id="loginName" required placeholder="Masukkan Nama Anda" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
         </div>
-
-
-        <!-- ========================================== -->
-        <!-- MOD ADMIN (ADMIN MODULE)                  -->
-        <!-- ========================================== -->
-        <div id="module-admin" class="hidden">
-
-            <!-- Navigasi Tab Admin -->
-            <nav class="flex justify-between items-center mb-6 bg-slate-900 text-white p-2 rounded-2xl shadow-md overflow-x-auto">
-                <button onclick="switchAdminPage(2)" id="adm-nav-2" class="flex-1 min-w-[140px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition bg-indigo-600 text-white">
-                    <i class="fa-solid fa-chart-line"></i> Rekod & Statistik
-                </button>
-                <div class="h-4 w-[1px] bg-slate-700"></div>
-                <button onclick="switchAdminPage(3)" id="adm-nav-3" class="flex-1 min-w-[140px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition text-slate-400 hover:text-white">
-                    <i class="fa-solid fa-trophy"></i> Laporan & Leaderboard
-                </button>
-                <div class="h-4 w-[1px] bg-slate-700"></div>
-                <button onclick="switchAdminPage(4)" id="adm-nav-4" class="flex-1 min-w-[140px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition text-slate-400 hover:text-white">
-                    <i class="fa-solid fa-users-gear"></i> Pengurusan Pelajar
-                </button>
-            </nav>
-
-            <!-- PAGE 2 ADMIN: DASHBOARD REKOD, KATEGORI & STATISTIK -->
-            <div id="admin-page-2" class="space-y-6">
-                <!-- Kawalan Kategori Khas -->
-                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                        <div>
-                            <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                                <i class="fa-solid fa-tags text-indigo-600"></i> Pengurusan Kategori Pecahan Khas
-                            </h3>
-                            <p class="text-xs text-slate-500">Tambah atau hapus kategori khas untuk pendaftaran bacaan pelajar di seluruh peranti</p>
-                        </div>
-                        <form onsubmit="handleAddCategory(event)" class="flex gap-2">
-                            <input type="text" id="input-new-cat" placeholder="Tambah kategori..." required class="px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500">
-                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
-                                <i class="fa-solid fa-plus"></i> Tambah
-                            </button>
-                        </form>
-                    </div>
-                    <div id="admin-cat-tags" class="flex flex-wrap gap-2">
-                        <!-- Dynamic Badges -->
-                    </div>
-                </div>
-
-                <!-- Admin Analytics Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                        <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                            <i class="fa-solid fa-chart-pie text-indigo-600"></i> Agihan Kategori Khas Buku (Awan Realtime)
-                        </h3>
-                        <div class="h-64 relative">
-                            <canvas id="chart-adm-categories"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                        <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                            <i class="fa-solid fa-chart-bar text-indigo-600"></i> Purata Bacaan Mengikut Kelas
-                        </h3>
-                        <div class="h-64 relative">
-                            <canvas id="chart-adm-class-avg"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Monthly Analytics -->
-                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-chart-line text-indigo-600"></i> Rekod Keseluruhan Bacaan Bulanan Sistem
-                    </h3>
-                    <div class="h-64 relative">
-                        <canvas id="chart-adm-monthly"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PAGE 3 ADMIN: LAPORAN BULANAN & LEADERBOARD -->
-            <div id="admin-page-3" class="space-y-6">
-                <!-- Podium 3 Teratas -->
-                <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 text-white shadow-xl">
-                    <h3 class="text-base font-bold text-amber-400 mb-6 text-center flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-trophy"></i> Papan Kedudukan Murid Teraktif (Top 3 Pemenang)
-                    </h3>
-                    <div id="podium-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end max-w-3xl mx-auto">
-                        <!-- Dynamic Podium Render -->
-                    </div>
-                </div>
-
-                <!-- Jadual Leaderboard Penuh -->
-                <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
-                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-ranking-star text-indigo-600"></i> Senarai Murid Aktif / Leaderboard Keseluruhan
-                    </h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs sm:text-sm">
-                            <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 uppercase font-semibold">
-                                <tr>
-                                    <th class="p-3">Kedudukan</th>
-                                    <th class="p-3">ID Pelajar</th>
-                                    <th class="p-3">Nama Pelajar</th>
-                                    <th class="p-3">Kelas</th>
-                                    <th class="p-3">Buku Dibaca</th>
-                                    <th class="p-3">Jumlah Mata 🏆</th>
-                                    <th class="p-3">Jumlah Bintang ⭐️</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-admin-leaderboard" class="divide-y divide-slate-100">
-                                <!-- Dynamic Rows -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PAGE 4 ADMIN: PENGURUSAN PROFIL PELAJAR -->
-            <div id="admin-page-4" class="space-y-6">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                    <div>
-                        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-users-gear text-indigo-600"></i> Pengurusan Profil Pelajar
-                        </h3>
-                        <p class="text-xs text-slate-500">Urus senarai pelajar, kemaskini ID, kelas, mata/bintang, dan tapisan kelas</p>
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        <select id="filter-admin-class" onchange="renderAdminStudents()" class="px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none bg-white">
-                            <option value="ALL">Semua Kelas</option>
-                        </select>
-                        <button onclick="openAddStudentModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm">
-                            <i class="fa-solid fa-user-plus"></i> Tambah Pelajar Baharu
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Jadual Pengurusan Pelajar -->
-                <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs sm:text-sm">
-                            <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 font-semibold uppercase">
-                                <tr>
-                                    <th class="p-4">ID Pelajar</th>
-                                    <th class="p-4">Nama Pelajar</th>
-                                    <th class="p-4">Kelas</th>
-                                    <th class="p-4 text-center">Mata 🏆</th>
-                                    <th class="p-4 text-center">Bintang ⭐️</th>
-                                    <th class="p-4 text-center">Tindakan</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-admin-students" class="divide-y divide-slate-100">
-                                <!-- Dynamic Student Rows -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+          <!-- PILIHAN KELAS YANG TELAH DIPERBARUI -->
+          <select id="loginClass" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+            <option value="">-- Pilih Kelas --</option>
+            <option value="Computer System">Computer System</option>
+            <option value="Perladangan">Perladangan</option>
+            <option value="Elektrik">Elektrik</option>
+          </select>
         </div>
-
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400">
-            &copy; 2026 e-NILAM Interaktif — Sistem Pengurusan Rekod Bacaan Digital (Multi-Device Cloud)
-        </div>
-    </footer>
-
-
-    <!-- MODAL: TAMBAH / EDIT PELAJAR (ADMIN) -->
-    <div id="modal-student" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 id="modal-student-title" class="font-bold text-slate-800 text-sm">Tambah Pelajar Baharu</h3>
-                <button onclick="closeStudentModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            <form id="form-admin-student" onsubmit="handleSaveStudent(event)" class="space-y-3">
-                <input type="hidden" id="modal-std-is-edit" value="false">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">ID Pelajar / Angka Giliran</label>
-                    <input type="text" id="modal-std-id" placeholder="Contoh: KV005" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500 uppercase">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nama Pelajar</label>
-                    <input type="text" id="modal-std-name" placeholder="Nama Penuh Pelajar" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Kelas</label>
-                    <input type="text" id="modal-std-class" placeholder="Contoh: 1 SVM KPD" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Mata Manual</label>
-                        <input type="number" id="modal-std-points" value="0" min="0" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Bintang Manual</label>
-                        <input type="number" id="modal-std-stars" value="0" min="0" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                </div>
-                <div class="flex justify-end gap-2 pt-3">
-                    <button type="button" onclick="closeStudentModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200">Batal</button>
-                    <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl">Simpan Data</button>
-                </div>
-            </form>
-        </div>
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition">
+          Masuk Sistem
+        </button>
+      </form>
     </div>
 
-
-    <!-- FIREBASE & CORE SCRIPT MODULE -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // APP STATE & CONSTANTS
-        const DEFAULT_CATEGORIES = ['Komputer', 'Perladangan', 'Elektrik', 'Automotif', 'Pembuat Pakaian', 'Pengurusan', 'Sains & Teknologi', 'Umum'];
-        const DEFAULT_STUDENTS = [
-            { id: 'KV001', name: 'Muhammad Amirul', class: '1 SVM KPD', points: 40, stars: 4 },
-            { id: 'KV002', name: 'Nur Aisyah', class: '1 SVM KPD', points: 60, stars: 6 },
-            { id: 'KV003', name: 'Ahmad Daniel', class: '2 DVM ETE', points: 30, stars: 3 },
-            { id: 'KV004', name: 'Siti Sarah', class: '1 DVM PLD', points: 80, stars: 8 },
-            { id: 'KV005', name: 'Tan Wei Ming', class: '2 DVM ETE', points: 20, stars: 2 }
-        ];
-
-        let categories = [...DEFAULT_CATEGORIES];
-        let students = [...DEFAULT_STUDENTS];
-        let books = [];
-        let currentUser = null;
-        let isFirebaseActive = false;
-
-        let db = null;
-        let auth = null;
-        let appId = typeof __app_id !== 'undefined' ? __app_id : 'nilam-vokasional-app';
-
-        // Chart instances
-        let chartStdCat = null, chartStdAvg = null, chartStdMonthly = null;
-        let chartAdmCat = null, chartAdmAvg = null, chartAdmMonthly = null;
-
-        // Initialize App & Firebase
-        async function initCloudSync() {
-            try {
-                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                    const firebaseConfig = JSON.parse(__firebase_config);
-                    const app = initializeApp(firebaseConfig);
-                    db = getFirestore(app);
-                    auth = getAuth(app);
-
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-
-                    isFirebaseActive = true;
-                    document.getElementById('cloud-status').classList.remove('hidden');
-                    setupRealtimeListeners();
-                } else {
-                    loadLocalFallback();
-                }
-            } catch (err) {
-                console.warn("Firestore error, switching to LocalStorage fallback:", err);
-                loadLocalFallback();
-            }
-        }
-
-        function loadLocalFallback() {
-            isFirebaseActive = false;
-            const storedCats = localStorage.getItem('nilam_v2_categories');
-            categories = storedCats ? JSON.parse(storedCats) : [...DEFAULT_CATEGORIES];
-
-            const storedStd = localStorage.getItem('nilam_v2_students');
-            students = storedStd ? JSON.parse(storedStd) : [...DEFAULT_STUDENTS];
-
-            const storedBooks = localStorage.getItem('nilam_v2_books');
-            books = storedBooks ? JSON.parse(storedBooks) : [];
-
-            document.getElementById('cloud-status').classList.remove('hidden');
-            document.getElementById('sync-text').innerText = "Mod Tempatan (Offline)";
-            document.getElementById('cloud-status').querySelector('span').className = "w-2.5 h-2.5 rounded-full bg-amber-400";
-            refreshUI();
-        }
-
-        // Realtime Firestore Sync
-        function setupRealtimeListeners() {
-            if (!db) return;
-
-            // 1. Sync Categories
-            const catDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'config', 'categories');
-            onSnapshot(catDocRef, (snapshot) => {
-                if (snapshot.exists() && snapshot.data().list) {
-                    categories = snapshot.data().list;
-                } else {
-                    setDoc(catDocRef, { list: DEFAULT_CATEGORIES });
-                }
-                populateCategoryDropdown();
-                if (currentUser && currentUser.role === 'admin') renderAdminPage2();
-            }, (err) => console.error(err));
-
-            // 2. Sync Students
-            const studentsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
-            onSnapshot(studentsColRef, (snapshot) => {
-                const cloudStudents = [];
-                snapshot.forEach(docSnap => cloudStudents.push(docSnap.data()));
-                
-                if (cloudStudents.length > 0) {
-                    students = cloudStudents;
-                } else {
-                    // Seed initial demo students
-                    DEFAULT_STUDENTS.forEach(s => {
-                        setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', s.id), s);
-                    });
-                }
-
-                // If currently logged in as student, refresh current user object
-                if (currentUser && currentUser.role === 'student') {
-                    const updatedMe = students.find(s => s.id === currentUser.data.id);
-                    if (updatedMe) currentUser.data = updatedMe;
-                }
-
-                refreshUI();
-            }, (err) => console.error(err));
-
-            // 3. Sync Books
-            const booksColRef = collection(db, 'artifacts', appId, 'public', 'data', 'books');
-            onSnapshot(booksColRef, (snapshot) => {
-                const cloudBooks = [];
-                snapshot.forEach(docSnap => cloudBooks.push(docSnap.data()));
-                books = cloudBooks;
-                refreshUI();
-            }, (err) => console.error(err));
-        }
-
-        function refreshUI() {
-            updateHeaderInfo();
-            if (currentUser) {
-                if (currentUser.role === 'student') {
-                    renderStudentDashboard();
-                    renderStudentLogs();
-                    renderStudentProfile();
-                } else {
-                    renderAdminPage2();
-                    renderAdminLeaderboard();
-                    renderAdminStudents();
-                }
-            }
-        }
-
-        // DOM UTILS
-        window.showToast = function(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const bgClass = type === 'success' ? 'bg-emerald-600' : 'bg-red-600';
-            toast.className = `${bgClass} text-white px-4 py-3 rounded-xl shadow-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all duration-300 transform translate-y-2 opacity-0`;
-            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> ${message}`;
-            container.appendChild(toast);
-
-            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
-            setTimeout(() => {
-                toast.classList.add('opacity-0');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        };
-
-        // LOGIN HANDLERS
-        window.switchLoginTab = function(tab) {
-            const stdBtn = document.getElementById('tab-btn-student');
-            const admBtn = document.getElementById('tab-btn-admin');
-            const stdForm = document.getElementById('form-student-login');
-            const admForm = document.getElementById('form-admin-login');
-
-            if (tab === 'student') {
-                stdBtn.className = "flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition bg-white shadow-sm text-indigo-600";
-                admBtn.className = "flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-500 hover:text-slate-800 transition";
-                stdForm.classList.remove('hidden');
-                admForm.classList.add('hidden');
-            } else {
-                admBtn.className = "flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition bg-white shadow-sm text-slate-800";
-                stdBtn.className = "flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-500 hover:text-slate-800 transition";
-                admForm.classList.remove('hidden');
-                stdForm.classList.add('hidden');
-            }
-        };
-
-        window.handleStudentLogin = function(e) {
-            e.preventDefault();
-            const idInput = document.getElementById('input-student-id').value.trim().toUpperCase();
-            const student = students.find(s => s.id.toUpperCase() === idInput);
-
-            if (student) {
-                currentUser = { role: 'student', data: student };
-                document.getElementById('view-login').classList.add('hidden');
-                document.getElementById('module-student').classList.remove('hidden');
-                document.getElementById('header-user-info').classList.remove('hidden');
-
-                updateHeaderInfo();
-                populateCategoryDropdown();
-                switchStudentPage(1);
-                window.showToast(`Selamat datang, ${student.name}!`);
-            } else {
-                window.showToast("ID Pelajar tidak wujud! Sila semak ID anda.", "error");
-            }
-        };
-
-        window.handleAdminLogin = function(e) {
-            e.preventDefault();
-            const pass = document.getElementById('input-admin-pass').value;
-            if (pass === 'admin123') {
-                currentUser = { role: 'admin', data: { name: 'Pentadbir Utama' } };
-                document.getElementById('view-login').classList.add('hidden');
-                document.getElementById('module-admin').classList.remove('hidden');
-                document.getElementById('header-user-info').classList.remove('hidden');
-
-                updateHeaderInfo();
-                switchAdminPage(2);
-                window.showToast("Berjaya Log Masuk Mod Pentadbir!");
-            } else {
-                window.showToast("Kata Laluan Admin Salah!", "error");
-            }
-        };
-
-        window.logout = function() {
-            currentUser = null;
-            document.getElementById('header-user-info').classList.add('hidden');
-            document.getElementById('module-student').classList.add('hidden');
-            document.getElementById('module-admin').classList.add('hidden');
-            document.getElementById('view-login').classList.remove('hidden');
-            document.getElementById('input-student-id').value = '';
-            document.getElementById('input-admin-pass').value = '';
-            window.showToast("Anda telah keluar daripada sistem.");
-        };
-
-        function updateHeaderInfo() {
-            if (!currentUser) return;
-            if (currentUser.role === 'student') {
-                document.getElementById('header-user-name').innerText = currentUser.data.name;
-                document.getElementById('header-user-class').innerText = currentUser.data.class;
-                document.getElementById('header-user-stars').innerText = currentUser.data.stars;
-                document.getElementById('header-badge').classList.remove('hidden');
-            } else {
-                document.getElementById('header-user-name').innerText = "Pentadbir System";
-                document.getElementById('header-user-class').innerText = "Mod Admin";
-                document.getElementById('header-badge').classList.add('hidden');
-            }
-        }
-
-        // STUDENT NAVIGATION
-        window.switchStudentPage = function(pageNum) {
-            for (let i = 1; i <= 4; i++) {
-                document.getElementById(`student-page-${i}`).classList.add('hidden');
-                const navBtn = document.getElementById(`std-nav-${i}`);
-                navBtn.className = "flex-1 min-w-[120px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition text-slate-500 hover:bg-slate-50";
-                navBtn.querySelector('span').className = "w-6 h-6 rounded-full bg-slate-200 text-slate-600 text-xs flex items-center justify-center";
-            }
-
-            document.getElementById(`student-page-${pageNum}`).classList.remove('hidden');
-            const activeNav = document.getElementById(`std-nav-${pageNum}`);
-            activeNav.className = "flex-1 min-w-[120px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition bg-indigo-50 text-indigo-700";
-            activeNav.querySelector('span').className = "w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center";
-
-            if (pageNum === 1) renderStudentDashboard();
-            if (pageNum === 3) renderStudentLogs();
-            if (pageNum === 4) renderStudentProfile();
-        };
-
-        function populateCategoryDropdown() {
-            const select = document.getElementById('book-category');
-            select.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
-        }
-
-        function renderStudentDashboard() {
-            if (!currentUser || currentUser.role !== 'student') return;
-
-            const std = currentUser.data;
-            document.getElementById('std-dash-welcome').innerText = `Selamat Datang, ${std.name}!`;
-            document.getElementById('std-dash-points').innerText = std.points;
-            document.getElementById('std-dash-stars').innerText = std.stars;
-
-            const myBooks = books.filter(b => b.studentId === std.id);
-            document.getElementById('std-dash-total-books').innerText = myBooks.length;
-
-            const activeStudentIds = new Set(books.map(b => b.studentId));
-            document.getElementById('std-dash-active-students').innerText = activeStudentIds.size;
-
-            const catCounts = {};
-            books.forEach(b => catCounts[b.category] = (catCounts[b.category] || 0) + 1);
-            let topCat = '-';
-            let maxC = 0;
-            for (let c in catCounts) {
-                if (catCounts[c] > maxC) { maxC = catCounts[c]; topCat = c; }
-            }
-            document.getElementById('std-dash-top-cat').innerText = topCat;
-
-            const classStudents = students.filter(s => s.class === std.class);
-            const classStudentIds = classStudents.map(s => s.id);
-            const classBooks = books.filter(b => classStudentIds.includes(b.studentId));
-            const avg = classStudents.length ? (classBooks.length / classStudents.length).toFixed(1) : 0;
-            document.getElementById('std-dash-class-avg').innerText = `${avg} Buku`;
-
-            updateChartsData();
-        }
-
-        window.handleSaveBook = async function(e) {
-            e.preventDefault();
-            if (!currentUser || currentUser.role !== 'student') return;
-
-            const btnSubmit = document.getElementById('btn-submit-book');
-            btnSubmit.disabled = true;
-            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Menghantar...`;
-
-            const bookId = 'b_' + Date.now();
-            const newBook = {
-                id: bookId,
-                studentId: currentUser.data.id,
-                title: document.getElementById('book-title').value,
-                category: document.getElementById('book-category').value,
-                language: document.getElementById('book-language').value,
-                pages: parseInt(document.getElementById('book-pages').value),
-                author: document.getElementById('book-author').value,
-                summary: document.getElementById('book-summary').value,
-                date: new Date().toISOString().split('T')[0]
-            };
-
-            const newPoints = currentUser.data.points + 10;
-            const newStars = currentUser.data.stars + 1;
-
-            if (isFirebaseActive && db) {
-                try {
-                    // Save book document
-                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'books', bookId), newBook);
-                    // Update student points in cloud
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', currentUser.data.id), {
-                        points: newPoints,
-                        stars: newStars
-                    });
-                } catch (err) {
-                    console.error("Cloud save failed:", err);
-                }
-            } else {
-                books.push(newBook);
-                const sIdx = students.findIndex(s => s.id === currentUser.data.id);
-                if (sIdx !== -1) {
-                    students[sIdx].points = newPoints;
-                    students[sIdx].stars = newStars;
-                }
-                localStorage.setItem('nilam_v2_books', JSON.stringify(books));
-                localStorage.setItem('nilam_v2_students', JSON.stringify(students));
-            }
-
-            btnSubmit.disabled = false;
-            btnSubmit.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Hantar Rekod Ke Awan`;
-
-            document.getElementById('form-new-book').reset();
-            window.showToast("Buku berjaya dihantar ke Awan! Tahniah +10 Mata & +1 Bintang! 🌟");
-            switchStudentPage(3);
-        };
-
-        function renderStudentLogs(filter = '') {
-            if (!currentUser || currentUser.role !== 'student') return;
-            const tbody = document.getElementById('table-student-logs');
-            const emptyState = document.getElementById('empty-student-logs');
-
-            let myBooks = books.filter(b => b.studentId === currentUser.data.id);
-            if (filter) {
-                myBooks = myBooks.filter(b => b.title.toLowerCase().includes(filter.toLowerCase()) || b.category.toLowerCase().includes(filter.toLowerCase()));
-            }
-
-            if (myBooks.length === 0) {
-                tbody.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-
-            emptyState.classList.add('hidden');
-            tbody.innerHTML = myBooks.map(b => `
-                <tr class="hover:bg-slate-50 transition">
-                    <td class="p-4 text-slate-500 font-mono text-xs">${b.date}</td>
-                    <td class="p-4 font-semibold text-slate-800">${b.title}</td>
-                    <td class="p-4"><span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full text-xs font-semibold">${b.category}</span></td>
-                    <td class="p-4 text-slate-600">${b.language}</td>
-                    <td class="p-4 text-slate-600">${b.pages} ms</td>
-                    <td class="p-4 text-slate-600">${b.author}</td>
-                    <td class="p-4 text-slate-500 max-w-xs truncate" title="${b.summary}">${b.summary}</td>
-                </tr>
-            `).join('');
-        }
-
-        window.filterStudentLogs = function(val) {
-            renderStudentLogs(val);
-        };
-
-        function renderStudentProfile() {
-            if (!currentUser || currentUser.role !== 'student') return;
-            const std = currentUser.data;
-
-            document.getElementById('std-prof-avatar').innerText = std.name.charAt(0);
-            document.getElementById('std-prof-name').innerText = std.name;
-            document.getElementById('std-prof-id').innerText = `ID: ${std.id}`;
-            document.getElementById('std-prof-class').innerText = `Kelas: ${std.class}`;
-            document.getElementById('std-prof-points').innerText = std.points;
-            document.getElementById('std-prof-stars').querySelector('span').innerText = std.stars;
-
-            const myBookCount = books.filter(b => b.studentId === std.id).length;
-            const badges = [
-                { name: 'Pembaca Pembuka', icon: 'fa-book-open', condition: myBookCount >= 1, desc: 'Membaca 1 buku' },
-                { name: 'Pencinta Buku', icon: 'fa-bookmark', condition: myBookCount >= 3, desc: 'Membaca 3 buku' },
-                { name: 'Bintang Terang', icon: 'fa-star', condition: std.stars >= 5, desc: 'Kumpul 5 Bintang' },
-                { name: 'Master Nilam', icon: 'fa-crown', condition: std.stars >= 10, desc: 'Kumpul 10 Bintang' }
-            ];
-
-            const badgeContainer = document.getElementById('std-badges-container');
-            badgeContainer.innerHTML = badges.map(b => `
-                <div class="p-4 rounded-2xl border ${b.condition ? 'border-amber-200 bg-amber-50/50' : 'border-slate-100 bg-slate-50 opacity-50'} text-center">
-                    <div class="w-12 h-12 rounded-full ${b.condition ? 'bg-amber-400 text-amber-950' : 'bg-slate-200 text-slate-400'} flex items-center justify-center mx-auto mb-2 text-xl shadow-sm">
-                        <i class="fa-solid ${b.icon}"></i>
-                    </div>
-                    <p class="font-bold text-xs text-slate-800">${b.name}</p>
-                    <p class="text-[10px] text-slate-500 mt-0.5">${b.desc}</p>
-                </div>
-            `).join('');
-        }
-
-        // ADMIN NAVIGATION & FUNCTIONS
-        window.switchAdminPage = function(pageNum) {
-            for (let i = 2; i <= 4; i++) {
-                document.getElementById(`admin-page-${i}`).classList.add('hidden');
-                const navBtn = document.getElementById(`adm-nav-${i}`);
-                navBtn.className = "flex-1 min-w-[140px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition text-slate-400 hover:text-white";
-            }
-
-            document.getElementById(`admin-page-${pageNum}`).classList.remove('hidden');
-            const activeNav = document.getElementById(`adm-nav-${pageNum}`);
-            activeNav.className = "flex-1 min-w-[140px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition bg-indigo-600 text-white";
-
-            if (pageNum === 2) renderAdminPage2();
-            if (pageNum === 3) renderAdminLeaderboard();
-            if (pageNum === 4) renderAdminStudents();
-        };
-
-        function renderAdminPage2() {
-            const tagContainer = document.getElementById('admin-cat-tags');
-            tagContainer.innerHTML = categories.map(c => `
-                <span class="bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2 border border-slate-200">
-                    ${c}
-                    <button onclick="deleteCategory('${c}')" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark"></i></button>
-                </span>
-            `).join('');
-
-            updateChartsData();
-        }
-
-        window.handleAddCategory = async function(e) {
-            e.preventDefault();
-            const input = document.getElementById('input-new-cat');
-            const val = input.value.trim();
-            if (val && !categories.includes(val)) {
-                categories.push(val);
-                if (isFirebaseActive && db) {
-                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'categories'), { list: categories });
-                } else {
-                    localStorage.setItem('nilam_v2_categories', JSON.stringify(categories));
-                    renderAdminPage2();
-                }
-                populateCategoryDropdown();
-                input.value = '';
-                window.showToast(`Kategori "${val}" berjaya ditambah!`);
-            }
-        };
-
-        window.deleteCategory = async function(cat) {
-            categories = categories.filter(c => c !== cat);
-            if (isFirebaseActive && db) {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'categories'), { list: categories });
-            } else {
-                localStorage.setItem('nilam_v2_categories', JSON.stringify(categories));
-                renderAdminPage2();
-            }
-            populateCategoryDropdown();
-            window.showToast(`Kategori "${cat}" telah dipadam.`);
-        };
-
-        function renderAdminLeaderboard() {
-            const sorted = [...students].sort((a, b) => b.stars - a.stars || b.points - a.points);
-
-            const podiumContainer = document.getElementById('podium-container');
-            const top1 = sorted[0];
-            const top2 = sorted[1];
-            const top3 = sorted[2];
-
-            podiumContainer.innerHTML = `
-                <!-- No 2 -->
-                <div class="order-2 md:order-1 bg-white/10 p-4 rounded-t-2xl text-center border-t-4 border-slate-300 backdrop-blur-sm">
-                    <div class="text-3xl mb-1">🥈</div>
-                    <p class="font-bold text-xs text-white">${top2 ? top2.name : '-'}</p>
-                    <p class="text-[10px] text-indigo-200">${top2 ? top2.class : '-'}</p>
-                    <div class="mt-2 bg-slate-200/20 py-1 rounded-lg text-xs font-extrabold text-amber-300">
-                        ${top2 ? top2.stars : 0} Bintang
-                    </div>
-                </div>
-                <!-- No 1 -->
-                <div class="order-1 md:order-2 bg-gradient-to-t from-amber-500/30 to-amber-500/10 p-5 rounded-t-2xl text-center border-t-4 border-amber-400 backdrop-blur-sm scale-105">
-                    <div class="text-4xl mb-1">🥇</div>
-                    <p class="font-extrabold text-sm text-amber-300">${top1 ? top1.name : '-'}</p>
-                    <p class="text-xs text-indigo-100">${top1 ? top1.class : '-'}</p>
-                    <div class="mt-2 bg-amber-400 text-indigo-950 py-1.5 rounded-lg text-xs font-black shadow">
-                        ${top1 ? top1.stars : 0} Bintang (Juara)
-                    </div>
-                </div>
-                <!-- No 3 -->
-                <div class="order-3 bg-white/10 p-4 rounded-t-2xl text-center border-t-4 border-amber-700 backdrop-blur-sm">
-                    <div class="text-3xl mb-1">🥉</div>
-                    <p class="font-bold text-xs text-white">${top3 ? top3.name : '-'}</p>
-                    <p class="text-[10px] text-indigo-200">${top3 ? top3.class : '-'}</p>
-                    <div class="mt-2 bg-slate-200/20 py-1 rounded-lg text-xs font-extrabold text-amber-300">
-                        ${top3 ? top3.stars : 0} Bintang
-                    </div>
-                </div>
-            `;
-
-            const tbody = document.getElementById('table-admin-leaderboard');
-            tbody.innerHTML = sorted.map((s, idx) => {
-                let badge = `<span class="font-mono text-slate-400 font-bold">#${idx + 1}</span>`;
-                if (idx === 0) badge = '🥇 <span class="font-bold text-amber-600">Nombor 1</span>';
-                if (idx === 1) badge = '🥈 <span class="font-bold text-slate-500">Nombor 2</span>';
-                if (idx === 2) badge = '🥉 <span class="font-bold text-amber-800">Nombor 3</span>';
-
-                const bCount = books.filter(b => b.studentId === s.id).length;
-
-                return `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3">${badge}</td>
-                        <td class="p-3 font-mono text-xs font-semibold text-slate-600">${s.id}</td>
-                        <td class="p-3 font-semibold text-slate-800">${s.name}</td>
-                        <td class="p-3"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-xs">${s.class}</span></td>
-                        <td class="p-3 text-slate-600 font-semibold">${bCount} Buku</td>
-                        <td class="p-3 text-indigo-600 font-bold">${s.points} Mata</td>
-                        <td class="p-3 text-amber-600 font-bold flex items-center gap-1"><i class="fa-solid fa-star text-xs"></i> ${s.stars}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        window.renderAdminStudents = function() {
-            const selectFilter = document.getElementById('filter-admin-class');
-            const classes = [...new Set(students.map(s => s.class))];
-            const currentSelected = selectFilter.value;
-            selectFilter.innerHTML = `<option value="ALL">Semua Kelas</option>` + classes.map(c => `<option value="${c}">${c}</option>`).join('');
-            selectFilter.value = currentSelected;
-
-            const selectedClass = selectFilter.value;
-            let filtered = students;
-            if (selectedClass !== 'ALL') {
-                filtered = students.filter(s => s.class === selectedClass);
-            }
-
-            const tbody = document.getElementById('table-admin-students');
-            tbody.innerHTML = filtered.map(s => `
-                <tr class="hover:bg-slate-50 transition">
-                    <td class="p-4 font-mono text-xs font-bold text-slate-700">${s.id}</td>
-                    <td class="p-4 font-semibold text-slate-800">${s.name}</td>
-                    <td class="p-4"><span class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full text-xs font-semibold">${s.class}</span></td>
-                    <td class="p-4 text-center font-bold text-indigo-600">${s.points}</td>
-                    <td class="p-4 text-center font-bold text-amber-500">${s.stars} ⭐</td>
-                    <td class="p-4 text-center">
-                        <div class="flex justify-center gap-2">
-                            <button onclick="openEditStudentModal('${s.id}')" class="bg-amber-100 hover:bg-amber-200 text-amber-800 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1">
-                                <i class="fa-solid fa-pen"></i> Edit
-                            </button>
-                            <button onclick="deleteStudent('${s.id}')" class="bg-red-100 hover:bg-red-200 text-red-700 px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1">
-                                <i class="fa-solid fa-trash"></i> Padam
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-        };
-
-        window.openAddStudentModal = function() {
-            document.getElementById('modal-student-title').innerText = "Tambah Pelajar Baharu";
-            document.getElementById('modal-std-is-edit').value = "false";
-            document.getElementById('modal-std-id').value = "";
-            document.getElementById('modal-std-id').readOnly = false;
-            document.getElementById('modal-std-name').value = "";
-            document.getElementById('modal-std-class').value = "";
-            document.getElementById('modal-std-points').value = "0";
-            document.getElementById('modal-std-stars').value = "0";
-            document.getElementById('modal-student').classList.remove('hidden');
-        };
-
-        window.openEditStudentModal = function(id) {
-            const std = students.find(s => s.id === id);
-            if (!std) return;
-
-            document.getElementById('modal-student-title').innerText = "Edit Profil Pelajar";
-            document.getElementById('modal-std-is-edit').value = "true";
-            document.getElementById('modal-std-id').value = std.id;
-            document.getElementById('modal-std-id').readOnly = true;
-            document.getElementById('modal-std-name').value = std.name;
-            document.getElementById('modal-std-class').value = std.class;
-            document.getElementById('modal-std-points').value = std.points;
-            document.getElementById('modal-std-stars').value = std.stars;
-            document.getElementById('modal-student').classList.remove('hidden');
-        };
-
-        window.closeStudentModal = function() {
-            document.getElementById('modal-student').classList.add('hidden');
-        };
-
-        window.handleSaveStudent = async function(e) {
-            e.preventDefault();
-            const isEdit = document.getElementById('modal-std-is-edit').value === "true";
-            const id = document.getElementById('modal-std-id').value.trim().toUpperCase();
-            const name = document.getElementById('modal-std-name').value.trim();
-            const sClass = document.getElementById('modal-std-class').value.trim();
-            const points = parseInt(document.getElementById('modal-std-points').value);
-            const stars = parseInt(document.getElementById('modal-std-stars').value);
-
-            const studentObj = { id, name, class: sClass, points, stars };
-
-            if (isFirebaseActive && db) {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id), studentObj);
-            } else {
-                if (isEdit) {
-                    const idx = students.findIndex(s => s.id === id);
-                    if (idx !== -1) students[idx] = studentObj;
-                } else {
-                    if (students.some(s => s.id === id)) {
-                        window.showToast("ID Pelajar telah wujud!", "error");
-                        return;
-                    }
-                    students.push(studentObj);
-                }
-                localStorage.setItem('nilam_v2_students', JSON.stringify(students));
-                renderAdminStudents();
-            }
-
-            closeStudentModal();
-            window.showToast("Data pelajar berjaya disimpan ke Awan!");
-        };
-
-        window.deleteStudent = async function(id) {
-            if (confirm("Adakah anda pasti mahu memadam profil pelajar ini?")) {
-                if (isFirebaseActive && db) {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id));
-                } else {
-                    students = students.filter(s => s.id !== id);
-                    books = books.filter(b => b.studentId !== id);
-                    localStorage.setItem('nilam_v2_students', JSON.stringify(students));
-                    localStorage.setItem('nilam_v2_books', JSON.stringify(books));
-                    renderAdminStudents();
-                }
-                window.showToast("Profil pelajar telah dipadam.");
-            }
-        };
-
-        // CHARTS SETUP
-        function initCharts() {
-            const donutOpts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } };
-            const barOpts = { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } };
-
-            chartStdCat = new Chart(document.getElementById('chart-std-categories'), { type: 'doughnut', data: { labels: [], datasets: [{ data: [], backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4', '#f97316', '#64748b'] }] }, options: donutOpts });
-            chartStdAvg = new Chart(document.getElementById('chart-std-class-avg'), { type: 'bar', data: { labels: [], datasets: [{ label: 'Purata Buku / Pelajar', data: [], backgroundColor: '#6366f1' }] }, options: barOpts });
-            chartStdMonthly = new Chart(document.getElementById('chart-std-monthly'), { type: 'line', data: { labels: ['Jan', 'Feb', 'Mac', 'Apr', 'Mei', 'Jun'], datasets: [{ label: 'Jumlah Bacaan Bulanan', data: [8, 15, 22, 18, 28, 35], borderColor: '#4f46e5', tension: 0.3, fill: true, backgroundColor: 'rgba(79, 70, 229, 0.1)' }] }, options: barOpts });
-
-            chartAdmCat = new Chart(document.getElementById('chart-adm-categories'), { type: 'pie', data: { labels: [], datasets: [{ data: [], backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4', '#f97316', '#64748b'] }] }, options: donutOpts });
-            chartAdmAvg = new Chart(document.getElementById('chart-adm-class-avg'), { type: 'bar', data: { labels: [], datasets: [{ label: 'Purata Bacaan Mengikut Kelas', data: [], backgroundColor: '#0f172a' }] }, options: barOpts });
-            chartAdmMonthly = new Chart(document.getElementById('chart-adm-monthly'), { type: 'line', data: { labels: ['Jan', 'Feb', 'Mac', 'Apr', 'Mei', 'Jun'], datasets: [{ label: 'Jumlah Bacaan Bulanan', data: [15, 25, 30, 45, 50, 65], borderColor: '#10b981', tension: 0.3 }] }, options: barOpts });
-
-            updateChartsData();
-        }
-
-        function updateChartsData() {
-            if (!chartStdCat) return;
-
-            const catCounts = {};
-            categories.forEach(c => catCounts[c] = 0);
-            books.forEach(b => {
-                catCounts[b.category] = (catCounts[b.category] || 0) + 1;
-            });
-            const catLabels = Object.keys(catCounts);
-            const catData = Object.values(catCounts);
-
-            chartStdCat.data.labels = catLabels;
-            chartStdCat.data.datasets[0].data = catData;
-            chartStdCat.update();
-
-            chartAdmCat.data.labels = catLabels;
-            chartAdmCat.data.datasets[0].data = catData;
-            chartAdmCat.update();
-
-            const classList = [...new Set(students.map(s => s.class))];
-            const classAvgData = classList.map(c => {
-                const stdsInClass = students.filter(s => s.class === c);
-                const ids = stdsInClass.map(s => s.id);
-                const booksInClass = books.filter(b => ids.includes(b.studentId)).length;
-                return stdsInClass.length ? (booksInClass / stdsInClass.length).toFixed(1) : 0;
-            });
-
-            chartStdAvg.data.labels = classList;
-            chartStdAvg.data.datasets[0].data = classAvgData;
-            chartStdAvg.update();
-
-            chartAdmAvg.data.labels = classList;
-            chartAdmAvg.data.datasets[0].data = classAvgData;
-            chartAdmAvg.update();
-        }
-
-        window.onload = function() {
-            initCharts();
-            initCloudSync();
-        };
-    </script>
+    <!-- MAIN FORM SCREEN (Page 2: Rekod Bacaan Baharu) -->
+    <div id="pageForm" class="hidden bg-white rounded-xl shadow-md p-6">
+      <div class="flex justify-between items-center mb-6 border-b pb-4">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800">Borang Rekod Bacaan Baharu</h2>
+          <p class="text-sm text-gray-500">Isi borang di bawah untuk menghantar laporan Nilam anda.</p>
+        </div>
+        <button onclick="handleLogout()" class="text-sm bg-red-100 text-red-600 hover:bg-red-200 px-3 py-1 rounded-lg">
+          Log Keluar
+        </button>
+      </div>
+
+      <!-- FORM INTEGRATED WITH WEB3FORMS -->
+      <form action="https://api.web3forms.com/submit" method="POST" id="nilamForm" onsubmit="handleSubmitNotice(event)" class="space-y-4">
+
+        <!-- Access Key daripada Web3Forms -->
+        <input type="hidden" name="access_key" value="a9f22977-e888-45ff-a45f-0a8865c4238c">
+        
+        <!-- Tajuk Subjek Emel yang Diterima Pentadbir -->
+        <input type="hidden" name="subject" value="Rekod e-NILAM Baharu Pelajar">
+        <input type="hidden" name="from_name" value="Sistem e-NILAM Web">
+
+        <!-- Hidden inputs untuk maklumat pelajar -->
+        <input type="hidden" id="student_id" name="ID_Pelajar">
+        <input type="hidden" id="student_name" name="Nama_Pelajar">
+        <input type="hidden" id="student_class" name="Kelas_Pelajar">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Tajuk Buku</label>
+            <input type="text" name="Tajuk_Buku" required placeholder="Contoh: Asas Pengaturcaraan C++" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Kategori Khas Buku</label>
+            <select name="Kategori_Khas" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+              <option value="">-- Pilih Kategori --</option>
+              <option value="Computer System">Computer System</option>
+              <option value="Perladangan">Perladangan</option>
+              <option value="Elektrik">Elektrik</option>
+              <option value="Umum">Umum / Lain-lain</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Bahasa</label>
+            <select name="Bahasa" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+              <option value="Bahasa Melayu">Bahasa Melayu</option>
+              <option value="Bahasa Inggeris">Bahasa Inggeris</option>
+              <option value="Lain-lain">Lain-lain</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Jumlah Muka Surat</label>
+            <input type="number" name="Muka_Surat" min="1" required placeholder="Contoh: 120" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nama Pengarang</label>
+          <input type="text" name="Nama_Pengarang" required placeholder="Contoh: Dr. Ahmad Razali" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Rumusan / Pengajaran</label>
+          <textarea name="Rumusan_Pengajaran" rows="4" required placeholder="Tuliskan ringkasan atau nilai murni yang didapati dari buku ini..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-md transition flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-paper-plane"></i>
+          <span>Hantar Rekod Bacaan</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- SUCCESS MESSAGE -->
+    <div id="pageSuccess" class="hidden bg-white rounded-xl shadow-md p-8 text-center max-w-md mx-auto">
+      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-800 mb-2">Berjaya Dihantar!</h3>
+      <p class="text-gray-600 mb-6">Rekod bacaan e-NILAM anda telah disahkan dan dihantar ke pentadbir.</p>
+      <button onclick="resetForm()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-2 rounded-lg">
+        Tambah Rekod Baharu
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    let currentUser = null;
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const id = document.getElementById('loginId').value.trim();
+      const name = document.getElementById('loginName').value.trim();
+      const studentClass = document.getElementById('loginClass').value;
+
+      currentUser = { id, name, studentClass };
+
+      // Set hidden input fields
+      document.getElementById('student_id').value = id;
+      document.getElementById('student_name').value = name;
+      document.getElementById('student_class').value = studentClass;
+
+      // Update UI Navigation
+      document.getElementById('displayUser').innerText = `${id} - ${name} (${studentClass})`;
+      document.getElementById('userInfo').classList.remove('hidden');
+
+      // Show Form Page
+      document.getElementById('pageLogin').classList.add('hidden');
+      document.getElementById('pageForm').classList.remove('hidden');
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      document.getElementById('userInfo').classList.add('hidden');
+      document.getElementById('pageForm').classList.add('hidden');
+      document.getElementById('pageSuccess').classList.add('hidden');
+      document.getElementById('pageLogin').classList.remove('hidden');
+      document.getElementById('formLogin').reset();
+    }
+
+    function handleSubmitNotice(e) {
+      setTimeout(() => {
+        document.getElementById('pageForm').classList.add('hidden');
+        document.getElementById('pageSuccess').classList.remove('hidden');
+      }, 500);
+    }
+
+    function resetForm() {
+      document.getElementById('nilamForm').reset();
+      if(currentUser) {
+        document.getElementById('student_id').value = currentUser.id;
+        document.getElementById('student_name').value = currentUser.name;
+        document.getElementById('student_class').value = currentUser.studentClass;
+      }
+      document.getElementById('pageSuccess').classList.add('hidden');
+      document.getElementById('pageForm').classList.remove('hidden');
+    }
+  </script>
 </body>
 </html>
