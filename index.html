@@ -13,7 +13,7 @@
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 font-sans antialiased">
 
-  <!-- ================= LOG IN PORTAL ================= -->
+  <!-- ================= SCREEN 0: PORTAL LOG MASUK ================= -->
   <div id="portalContainer" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 relative z-10">
     <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-6 sm:p-8 max-w-md w-full border border-white/20 relative z-20">
       
@@ -25,7 +25,7 @@
         <p class="text-xs text-slate-500 mt-1">Sistem Rekod & Analisis Bacaan Digital</p>
       </div>
 
-      <!-- TOGGLE ROLE BUTTONS (DIBAIKI DENGAN CURSOR-POINTER & Z-INDEX) -->
+      <!-- TOGGLE ROLE BUTTONS -->
       <div class="flex rounded-xl bg-slate-100 p-1 mb-6 border border-slate-200 relative z-30">
         <button type="button" onclick="switchRole('student')" id="roleBtnStudent" class="flex-1 py-2 text-sm font-bold rounded-lg bg-blue-600 text-white shadow-sm transition cursor-pointer relative z-30">
           <i class="fa-solid fa-user-graduate mr-1"></i> Pelajar
@@ -64,8 +64,215 @@
     </div>
   </div>
 
+
+  <!-- ================= APPLICATION DASHBOARD ================= -->
+  <div id="appContainer" class="hidden min-h-screen flex flex-col">
+
+    <!-- HEADER SYSTEM -->
+    <header class="bg-blue-900 text-white shadow-md sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap justify-between items-center gap-3">
+        
+        <div class="flex items-center space-x-3">
+          <div class="bg-amber-400 text-blue-950 p-2 rounded-xl font-bold shadow">
+            <i class="fa-solid fa-book-open text-xl"></i>
+          </div>
+          <div>
+            <h1 class="font-bold text-lg leading-tight tracking-wide">e-NILAM Interaktif</h1>
+            <p class="text-xs text-blue-200">Sistem Rekod & Analisis Bacaan Digital</p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-3 text-xs sm:text-sm">
+          <span class="bg-blue-950 text-amber-300 px-3 py-1 rounded-full flex items-center space-x-2 border border-blue-800">
+            <span class="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
+            <span>Mod Tempatan</span>
+          </span>
+
+          <div class="text-right hidden md:block">
+            <div class="font-bold text-white tracking-wide" id="headerUserName">Nama Pengguna</div>
+            <div class="text-blue-300 text-xs" id="headerUserClass">Kategori Kelas</div>
+          </div>
+
+          <div id="headerStarsBadge" class="bg-amber-500 text-blue-950 font-extrabold px-3 py-1.5 rounded-full flex items-center space-x-1 shadow">
+            <i class="fa-solid fa-star"></i>
+            <span id="headerStarsText">0 Bintang</span>
+          </div>
+
+          <button onclick="handleLogout()" class="bg-rose-500 hover:bg-rose-600 text-white font-semibold px-3.5 py-1.5 rounded-xl flex items-center space-x-1.5 transition shadow cursor-pointer">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Keluar</span>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 w-full space-y-6">
+
+      <!-- ================= PELAJAR VIEW ================= -->
+      <div id="studentView" class="space-y-6 hidden">
+        <div class="bg-white rounded-2xl shadow-sm p-1.5 flex flex-wrap gap-2 text-sm font-medium text-slate-500 border border-slate-200">
+          <button onclick="switchStudentTab(1)" id="stdBtn1" class="flex-1 py-2.5 px-4 rounded-xl bg-blue-50 text-blue-700 font-bold flex items-center justify-center space-x-2 transition cursor-pointer">
+            <span id="stdBadge1" class="w-6 h-6 bg-blue-600 text-white rounded-full text-xs flex items-center justify-center font-extrabold">1</span>
+            <span>Laman Utama</span>
+          </button>
+          <button onclick="switchStudentTab(2)" id="stdBtn2" class="flex-1 py-2.5 px-4 rounded-xl hover:bg-slate-50 flex items-center justify-center space-x-2 transition cursor-pointer">
+            <span id="stdBadge2" class="w-6 h-6 bg-slate-200 text-slate-700 rounded-full text-xs flex items-center justify-center font-bold">2</span>
+            <span>Rekod Baru</span>
+          </button>
+          <button onclick="switchStudentTab(3)" id="stdBtn3" class="flex-1 py-2.5 px-4 rounded-xl hover:bg-slate-50 flex items-center justify-center space-x-2 transition cursor-pointer">
+            <span id="stdBadge3" class="w-6 h-6 bg-slate-200 text-slate-700 rounded-full text-xs flex items-center justify-center font-bold">3</span>
+            <span>Log Bacaan</span>
+          </button>
+          <button onclick="switchStudentTab(4)" id="stdBtn4" class="flex-1 py-2.5 px-4 rounded-xl hover:bg-slate-50 flex items-center justify-center space-x-2 transition cursor-pointer">
+            <span id="stdBadge4" class="w-6 h-6 bg-slate-200 text-slate-700 rounded-full text-xs flex items-center justify-center font-bold">4</span>
+            <span>Profil Pelajar</span>
+          </button>
+        </div>
+
+        <!-- PAGE 1: LAMAN UTAMA -->
+        <div id="stdPage1" class="space-y-6">
+          <div class="bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 rounded-2xl p-6 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div>
+              <span class="bg-blue-950/60 text-blue-200 text-xs px-3 py-1 rounded-full border border-blue-400/30 font-semibold">Pencapaian Semasa Saya</span>
+              <h2 class="text-2xl sm:text-3xl font-black mt-2 tracking-wide" id="stdWelcomeHeading">Selamat Datang!</h2>
+              <p class="text-blue-100 text-sm mt-1">Teruskan membaca buku NILAM dari rumah untuk menambah mata & mengumpul bintang!</p>
+            </div>
+            <div class="bg-blue-950/40 backdrop-blur-md rounded-2xl p-4 border border-white/10 flex items-center space-x-6 min-w-[240px] justify-around">
+              <div class="text-center">
+                <p class="text-[10px] text-blue-200 font-bold uppercase tracking-wider">Jumlah Mata 🏆</p>
+                <p class="text-3xl font-black text-amber-400" id="stdPointsText">0</p>
+              </div>
+              <div class="h-10 w-[1px] bg-blue-400/30"></div>
+              <div class="text-center">
+                <p class="text-[10px] text-blue-200 font-bold uppercase tracking-wider">Bintang ⭐</p>
+                <p class="text-3xl font-black text-amber-300" id="stdStarsText">0</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border flex items-center space-x-4">
+              <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-book"></i></div>
+              <div><p class="text-xs text-slate-500 font-medium">Jumlah Buku Dibaca Saya</p><p class="text-2xl font-bold text-slate-800" id="stdStatMyBooks">0</p></div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border flex items-center space-x-4">
+              <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-users"></i></div>
+              <div><p class="text-xs text-slate-500 font-medium">Jumlah Pelajar Membaca</p><p class="text-2xl font-bold text-slate-800" id="stdStatTotalStudents">0</p></div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border flex items-center space-x-4">
+              <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-wrench"></i></div>
+              <div><p class="text-xs text-slate-500 font-medium">Kategori Khas Terbanyak</p><p class="text-2xl font-bold text-slate-800" id="stdStatTopCategory">-</p></div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border flex items-center space-x-4">
+              <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-chart-line"></i></div>
+              <div><p class="text-xs text-slate-500 font-medium">Purata Bacaan Kelas</p><p class="text-2xl font-bold text-slate-800" id="stdStatClassAvg">0.0 Buku</p></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border space-y-4">
+              <h3 class="font-bold text-slate-700"><i class="fa-solid fa-chart-pie text-blue-600 mr-2"></i>Agihan Kategori Khas Buku</h3>
+              <div class="h-64 relative"><canvas id="stdCategoryChart"></canvas></div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border space-y-4">
+              <h3 class="font-bold text-slate-700"><i class="fa-solid fa-chart-bar text-blue-600 mr-2"></i>Purata Jumlah Pecahan Bacaan Mengikut Kelas</h3>
+              <div class="h-64 relative"><canvas id="stdClassAvgChart"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE 2: REKOD BARU -->
+        <div id="stdPage2" class="hidden bg-white p-6 rounded-2xl shadow-sm border space-y-6">
+          <h3 class="text-2xl font-bold text-slate-800 border-b pb-4">Borang Rekod Bacaan Baharu</h3>
+          <form id="stdBookForm" onsubmit="handleBookSubmit(event)" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div><label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tajuk Buku</label><input type="text" id="formTitle" required class="w-full border rounded-xl p-2.5 text-sm"></div>
+              <div><label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kategori Khas Buku</label><select id="formCategory" required class="w-full border rounded-xl p-2.5 text-sm bg-white"></select></div>
+              <div><label class="block text-xs font-bold text-slate-700 uppercase mb-1">Bahasa</label><select id="formLanguage" required class="w-full border rounded-xl p-2.5 text-sm bg-white"><option value="Bahasa Melayu">Bahasa Melayu</option><option value="Bahasa Inggeris">Bahasa Inggeris</option></select></div>
+              <div><label class="block text-xs font-bold text-slate-700 uppercase mb-1">Jumlah Muka Surat</label><input type="number" id="formPages" required class="w-full border rounded-xl p-2.5 text-sm"></div>
+            </div>
+            <div><label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Pengarang</label><input type="text" id="formAuthor" required class="w-full border rounded-xl p-2.5 text-sm"></div>
+            <div><label class="block text-xs font-bold text-slate-700 uppercase mb-1">Rumusan / Pengajaran</label><textarea id="formSummary" rows="4" required class="w-full border rounded-xl p-2.5 text-sm"></textarea></div>
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow transition cursor-pointer">Hantar Rekod Bacaan (+10 Mata / +1 Bintang)</button>
+          </form>
+        </div>
+
+        <!-- PAGE 3: LOG BACAAN -->
+        <div id="stdPage3" class="hidden bg-white p-6 rounded-2xl shadow-sm border space-y-4">
+          <h3 class="text-2xl font-bold text-slate-800 border-b pb-4">Log Sejarah Bacaan Saya</h3>
+          <div class="overflow-x-auto"><table class="w-full text-left"><tbody id="stdLogTableBody" class="divide-y text-sm"></tbody></table></div>
+        </div>
+
+        <!-- PAGE 4: PROFIL PELAJAR -->
+        <div id="stdPage4" class="hidden bg-white p-6 rounded-2xl shadow-sm border space-y-6">
+          <h3 class="text-2xl font-bold text-slate-800 border-b pb-4">Profil Pelajar</h3>
+          <div class="p-4 bg-slate-50 rounded-xl"><p><strong>Nama:</strong> <span id="profileName">-</span></p><p><strong>Kelas:</strong> <span id="profileClass">-</span></p></div>
+        </div>
+      </div>
+
+      <!-- ================= PENTADBIR VIEW ================= -->
+      <div id="adminView" class="space-y-6 hidden">
+        <div class="bg-slate-900 text-white rounded-2xl shadow-md p-1.5 flex flex-wrap gap-2 text-sm font-medium">
+          <button onclick="switchAdminTab(1)" id="admBtn1" class="flex-1 py-3 px-4 rounded-xl bg-blue-600 text-white font-bold flex items-center justify-center space-x-2 transition cursor-pointer">
+            <i class="fa-solid fa-chart-line"></i><span>Rekod & Statistik</span>
+          </button>
+          <button onclick="switchAdminTab(2)" id="admBtn2" class="flex-1 py-3 px-4 rounded-xl hover:bg-slate-800 text-slate-300 flex items-center justify-center space-x-2 transition cursor-pointer">
+            <i class="fa-solid fa-trophy"></i><span>Laporan & Leaderboard</span>
+          </button>
+          <button onclick="switchAdminTab(3)" id="admBtn3" class="flex-1 py-3 px-4 rounded-xl hover:bg-slate-800 text-slate-300 flex items-center justify-center space-x-2 transition cursor-pointer">
+            <i class="fa-solid fa-users-gear"></i><span>Pengurusan Pelajar</span>
+          </button>
+        </div>
+
+        <!-- PAGE 1 ADMIN -->
+        <div id="admPage1" class="space-y-6">
+          <div class="bg-white p-6 rounded-2xl shadow-sm border space-y-4">
+            <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-tags text-blue-600 mr-2"></i>Pengurusan Kategori Pecahan Khas</h3>
+            <form onsubmit="handleAddCategory(event)" class="flex gap-2"><input type="text" id="inputNewCategory" required placeholder="Tambah kategori..." class="px-3.5 py-1.5 border rounded-xl text-sm"><button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold">Tambah</button></form>
+            <div class="flex flex-wrap gap-2 pt-2" id="categoryTagsContainer"></div>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border"><h3 class="font-bold text-slate-700 mb-4">Agihan Kategori Khas Buku</h3><div class="h-64 relative"><canvas id="admCategoryChart"></canvas></div></div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border"><h3 class="font-bold text-slate-700 mb-4">Purata Bacaan Mengikut Kelas</h3><div class="h-64 relative"><canvas id="admClassAvgChart"></canvas></div></div>
+          </div>
+        </div>
+
+        <!-- PAGE 2 ADMIN -->
+        <div id="admPage2" class="hidden bg-white p-6 rounded-2xl shadow-sm border space-y-6">
+          <h3 class="text-2xl font-bold text-slate-800 border-b pb-4">Kedudukan Murid Teraktif</h3>
+          <div class="overflow-x-auto"><table class="w-full text-left"><tbody id="leaderboardTableBody" class="divide-y text-sm"></tbody></table></div>
+        </div>
+
+        <!-- PAGE 3 ADMIN -->
+        <div id="admPage3" class="hidden bg-white p-6 rounded-2xl shadow-sm border space-y-6">
+          <h3 class="text-2xl font-bold text-slate-800 border-b pb-4">Pengurusan Profil Pelajar Mengikut Kelas</h3>
+          <div class="overflow-x-auto"><table class="w-full text-left"><tbody id="adminStudentTableBody" class="divide-y text-sm"></tbody></table></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-    // FUNGSI TUKAR ROLE / MOD PORTAL (PELAJAR <-> PENTADBIR)
+    const defaultData = {
+      categories: ["Computer System", "Perladangan", "Elektrik", "Umum"],
+      students: [
+        { id: "KV001", name: "WHITIAN DCYETON ANAK BUNGU", class: "COMPUTER SYSTEM", points: 0, stars: 0, booksRead: 0 },
+        { id: "KV002", name: "ALEXANDER SIMON", class: "PERLADANGAN", points: 20, stars: 2, booksRead: 2 }
+      ],
+      books: []
+    };
+
+    let appData = JSON.parse(localStorage.getItem('eNilamData')) || defaultData;
+    let currentUser = null;
+    let stdCatChart = null, stdClassChart = null, admCatChart = null, admClassChart = null;
+
+    function saveData() { localStorage.setItem('eNilamData', JSON.stringify(appData)); }
+
     function switchRole(role) {
       const btnStudent = document.getElementById('roleBtnStudent');
       const btnAdmin = document.getElementById('roleBtnAdmin');
@@ -74,4 +281,140 @@
 
       if (role === 'admin') {
         btnAdmin.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-indigo-700 text-white shadow-sm transition cursor-pointer relative z-30";
-        btnStudent.className = "flex-1 py-2 text-sm font-bold rounded-lg text-slate-600 hover:text-blue-600 transition cursor-pointer relative z
+        btnStudent.className = "flex-1 py-2 text-sm font-bold rounded-lg text-slate-600 hover:text-blue-600 transition cursor-pointer relative z-30";
+        formStudent.classList.add('hidden');
+        formAdmin.classList.remove('hidden');
+      } else {
+        btnStudent.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-blue-600 text-white shadow-sm transition cursor-pointer relative z-30";
+        btnAdmin.className = "flex-1 py-2 text-sm font-bold rounded-lg text-slate-600 hover:text-blue-600 transition cursor-pointer relative z-30";
+        formAdmin.classList.add('hidden');
+        formStudent.classList.remove('hidden');
+      }
+    }
+
+    function handleStudentLogin(e) {
+      e.preventDefault();
+      const idInput = document.getElementById('inputStudentId').value.trim().toUpperCase();
+      const student = appData.students.find(s => s.id === idInput);
+      if (student) {
+        currentUser = { role: 'student', id: student.id };
+        showAppScreen('student');
+      } else { alert("ID Pelajar tidak dijumpai!"); }
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const pwd = document.getElementById('inputAdminPassword').value;
+      if (pwd === 'admin123') {
+        currentUser = { role: 'admin' };
+        showAppScreen('admin');
+      } else { alert("Kata laluan Admin salah! (Gunakan: admin123)"); }
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      document.getElementById('appContainer').classList.add('hidden');
+      document.getElementById('portalContainer').classList.remove('hidden');
+    }
+
+    function showAppScreen(role) {
+      document.getElementById('portalContainer').classList.add('hidden');
+      document.getElementById('appContainer').classList.remove('hidden');
+
+      if (role === 'student') {
+        document.getElementById('studentView').classList.remove('hidden');
+        document.getElementById('adminView').classList.add('hidden');
+        document.getElementById('headerStarsBadge').classList.remove('hidden');
+        switchStudentTab(1);
+        renderStudentDashboard();
+      } else {
+        document.getElementById('adminView').classList.remove('hidden');
+        document.getElementById('studentView').classList.add('hidden');
+        document.getElementById('headerStarsBadge').classList.add('hidden');
+        document.getElementById('headerUserName').innerText = "Pentadbir System";
+        document.getElementById('headerUserClass').innerText = "Mod Admin";
+        switchAdminTab(1);
+        renderAdminDashboard();
+      }
+    }
+
+    function switchStudentTab(tabNum) {
+      for (let i = 1; i <= 4; i++) document.getElementById(`stdPage${i}`).classList.add('hidden');
+      document.getElementById(`stdPage${tabNum}`).classList.remove('hidden');
+      if (tabNum === 1) initStudentCharts();
+    }
+
+    function switchAdminTab(tabNum) {
+      for (let i = 1; i <= 3; i++) document.getElementById(`admPage${i}`).classList.add('hidden');
+      document.getElementById(`admPage${tabNum}`).classList.remove('hidden');
+      if (tabNum === 1) initAdminCharts();
+      if (tabNum === 2) renderLeaderboard();
+      if (tabNum === 3) renderAdminStudentTable();
+    }
+
+    function renderStudentDashboard() {
+      const student = appData.students.find(s => s.id === currentUser.id);
+      if (!student) return;
+      document.getElementById('headerUserName').innerText = student.name;
+      document.getElementById('headerUserClass').innerText = student.class;
+      document.getElementById('headerStarsText').innerText = `${student.stars} Bintang`;
+      document.getElementById('stdWelcomeHeading').innerText = `Selamat Datang, ${student.name}!`;
+      document.getElementById('stdPointsText').innerText = student.points;
+      document.getElementById('stdStarsText').innerText = student.stars;
+      document.getElementById('stdStatMyBooks').innerText = student.booksRead;
+      document.getElementById('stdStatTotalStudents').innerText = appData.students.length;
+      document.getElementById('profileName').innerText = student.name;
+      document.getElementById('profileClass').innerText = student.class;
+
+      const catSelect = document.getElementById('formCategory');
+      catSelect.innerHTML = `<option value="">-- Pilih Kategori --</option>` + appData.categories.map(c => `<option value="${c}">${c}</option>`).join('');
+    }
+
+    function handleBookSubmit(e) {
+      e.preventDefault();
+      const student = appData.students.find(s => s.id === currentUser.id);
+      student.points += 10; student.stars += 1; student.booksRead += 1;
+      saveData();
+      renderStudentDashboard();
+      alert("Tahniah! Rekod bacaan berjaya dihantar. (+10 Mata / +1 Bintang)");
+      switchStudentTab(3);
+    }
+
+    function renderAdminDashboard() {
+      const container = document.getElementById('categoryTagsContainer');
+      container.innerHTML = appData.categories.map(cat => `<span class="bg-slate-100 border px-3 py-1 rounded-xl text-xs font-bold mr-2">${cat}</span>`).join('');
+    }
+
+    function handleAddCategory(e) {
+      e.preventDefault();
+      const val = document.getElementById('inputNewCategory').value.trim();
+      if (val && !appData.categories.includes(val)) {
+        appData.categories.push(val); saveData(); renderAdminDashboard();
+        document.getElementById('inputNewCategory').value = "";
+      }
+    }
+
+    function renderLeaderboard() {
+      const tbody = document.getElementById('leaderboardTableBody');
+      tbody.innerHTML = appData.students.map((s, idx) => `<tr class="border-b p-2"><td class="p-3 font-bold">${idx + 1}</td><td class="p-3 font-bold">${s.name}</td><td class="p-3">${s.class}</td><td class="p-3 text-blue-600 font-bold">${s.points} Mata</td></tr>`).join('');
+    }
+
+    function renderAdminStudentTable() {
+      const tbody = document.getElementById('adminStudentTableBody');
+      tbody.innerHTML = appData.students.map(s => `<tr class="border-b p-2"><td class="p-3 font-bold">${s.id}</td><td class="p-3">${s.name}</td><td class="p-3 font-bold text-blue-600">${s.points} Mata</td></tr>`).join('');
+    }
+
+    function initStudentCharts() {
+      const ctx = document.getElementById('stdCategoryChart').getContext('2d');
+      if (stdCatChart) stdCatChart.destroy();
+      stdCatChart = new Chart(ctx, { type: 'doughnut', data: { labels: appData.categories, datasets: [{ data: [1, 2, 1, 0], backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899'] }] } });
+    }
+
+    function initAdminCharts() {
+      const ctx = document.getElementById('admCategoryChart').getContext('2d');
+      if (admCatChart) admCatChart.destroy();
+      admCatChart = new Chart(ctx, { type: 'doughnut', data: { labels: appData.categories, datasets: [{ data: [1, 2, 1, 0], backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899'] }] } });
+    }
+  </script>
+</body>
+</html>
