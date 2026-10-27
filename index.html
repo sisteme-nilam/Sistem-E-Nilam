@@ -39,7 +39,7 @@
       <form id="studentLoginForm" onsubmit="handleStudentLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">ID Pelajar</label>
-          <input type="text" id="inputStudentId" required placeholder="Masukkan ID Pelajar" class="w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none uppercase text-sm font-semibold">
+          <input type="text" id="inputStudentId" required placeholder="Masukkan ID Pelajar (cth: KV001)" class="w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none uppercase text-sm font-semibold">
         </div>
         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-md transition flex items-center justify-center space-x-2 cursor-pointer">
           <span>Log Masuk Pelajar</span>
@@ -311,22 +311,40 @@
     </main>
   </div>
 
-  <!-- JAVASCRIPT LOGIC -->
+  <!-- JAVASCRIPT LOGIC WITH AUTO-REGISTER & PERSISTENT STORAGE -->
   <script>
     const defaultData = {
       categories: ["Computer System", "Perladangan", "Elektrik", "Umum"],
       students: [
         { id: "KV001", name: "WHITIAN DCYETON ANAK BUNGU", class: "COMPUTER SYSTEM", points: 0, stars: 0, booksRead: 0 },
-        { id: "KV002", name: "ALEXANDER SIMON", class: "PERLADANGAN", points: 20, stars: 2, booksRead: 2 }
+        { id: "KV002", name: "ALEXANDER SIMON", class: "PERLADANGAN", points: 20, stars: 2, booksRead: 2 },
+        { id: "KV003", name: "NURUL AINI", class: "ELEKTRIK", points: 10, stars: 1, booksRead: 1 },
+        { id: "KV004", name: "GABRIEL TAN", class: "COMPUTER SYSTEM", points: 30, stars: 3, booksRead: 3 }
       ],
       books: []
     };
 
-    let appData = JSON.parse(localStorage.getItem('eNilamData')) || defaultData;
+    let appData = defaultData;
+    try {
+      const saved = localStorage.getItem('eNilamData');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.students && parsed.students.length > 0) {
+          appData = parsed;
+        }
+      }
+    } catch(e) {
+      console.warn("Storage warning, using defaultData.");
+    }
+
     let currentUser = null;
     let stdCatChart = null, stdClassChart = null, admCatChart = null, admClassChart = null;
 
-    function saveData() { localStorage.setItem('eNilamData', JSON.stringify(appData)); }
+    function saveData() { 
+      try {
+        localStorage.setItem('eNilamData', JSON.stringify(appData)); 
+      } catch(e) {}
+    }
 
     function switchRole(role) {
       const btnStudent = document.getElementById('roleBtnStudent');
@@ -347,14 +365,45 @@
       }
     }
 
+    // SYSTEM LOG-IN & AUTO REGISTER NEW STUDENTS
     function handleStudentLogin(e) {
       e.preventDefault();
-      const idInput = document.getElementById('inputStudentId').value.trim().toUpperCase();
-      const student = appData.students.find(s => s.id === idInput);
-      if (student) {
-        currentUser = { role: 'student', id: student.id };
-        showAppScreen('student');
-      } else { alert("ID Pelajar tidak dijumpai dalam sistem!"); }
+      const rawId = document.getElementById('inputStudentId').value;
+      const idInput = rawId.trim().toUpperCase();
+
+      if (!idInput) {
+        alert("Sila masukkan ID Pelajar.");
+        return;
+      }
+
+      let student = appData.students.find(s => s.id === idInput);
+
+      // JIKA PELAJAR BELUM DAFTAR: DAFTAR SECARA AUTOMATIK
+      if (!student) {
+        const askName = prompt(`ID Pelajar [${idInput}] belum didaftarkan.\n\nSila masukkan Nama Penuh Pelajar untuk pendaftaran pantas:`);
+        if (askName && askName.trim() !== "") {
+          const askClass = prompt("Masukkan Kategori Kelas (Contoh: COMPUTER SYSTEM / PERLADANGAN / ELEKTRIK):", "COMPUTER SYSTEM");
+          const finalClass = (askClass && askClass.trim() !== "") ? askClass.trim().toUpperCase() : "COMPUTER SYSTEM";
+
+          student = {
+            id: idInput,
+            name: askName.trim(),
+            class: finalClass,
+            points: 0,
+            stars: 0,
+            booksRead: 0
+          };
+
+          appData.students.push(student);
+          saveData();
+          alert(`Akaun baharu untuk ${student.name} (${student.id}) berjaya didaftarkan!`);
+        } else {
+          return;
+        }
+      }
+
+      currentUser = { role: 'student', id: student.id };
+      showAppScreen('student');
     }
 
     function handleAdminLogin(e) {
