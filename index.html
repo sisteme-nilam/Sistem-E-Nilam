@@ -13,7 +13,7 @@
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 font-sans antialiased">
 
-  <!-- ================= SCREEN 0: PORTAL LOG MASUK ================= -->
+  <!-- ================= LOG IN PORTAL ================= -->
   <div id="portalContainer" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 relative z-10">
     <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-6 sm:p-8 max-w-md w-full border border-white/20 relative z-20">
       
@@ -39,8 +39,7 @@
       <form id="studentLoginForm" onsubmit="handleStudentLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">ID Pelajar</label>
-          <input type="text" id="inputStudentId" required placeholder="Contoh: KV001" class="w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none uppercase text-sm font-semibold">
-          <p class="text-[11px] text-slate-400 mt-1">ID sedia ada: <span class="text-blue-700 font-bold">KV001, KV002, KV003, KV004</span></p>
+          <input type="text" id="inputStudentId" required placeholder="Masukkan ID Pelajar" class="w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none uppercase text-sm font-semibold">
         </div>
         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-md transition flex items-center justify-center space-x-2 cursor-pointer">
           <span>Log Masuk Pelajar</span>
@@ -53,7 +52,6 @@
         <div>
           <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Kata Laluan Pentadbir</label>
           <input type="password" id="inputAdminPassword" required placeholder="Masukkan Kata Laluan" class="w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm">
-          <p class="text-[11px] text-slate-400 mt-1">Kata laluan: <code class="bg-slate-100 px-1.5 py-0.5 rounded text-blue-700 font-bold">admin123</code></p>
         </div>
         <button type="submit" class="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-3 rounded-xl shadow-md transition flex items-center justify-center space-x-2 cursor-pointer">
           <span>Log Masuk Admin</span>
@@ -192,229 +190,4 @@
               <div><label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tajuk Buku</label><input type="text" id="formTitle" required class="w-full border rounded-xl p-2.5 text-sm"></div>
               <div><label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kategori Khas Buku</label><select id="formCategory" required class="w-full border rounded-xl p-2.5 text-sm bg-white"></select></div>
               <div><label class="block text-xs font-bold text-slate-700 uppercase mb-1">Bahasa</label><select id="formLanguage" required class="w-full border rounded-xl p-2.5 text-sm bg-white"><option value="Bahasa Melayu">Bahasa Melayu</option><option value="Bahasa Inggeris">Bahasa Inggeris</option></select></div>
-              <div><label class="block text-xs font-bold text-slate-700 uppercase mb-1">Jumlah Muka Surat</label><input type="number" id="formPages" required class="w-full border rounded-xl p-2.5 text-sm"></div>
-            </div>
-            <div><label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Pengarang</label><input type="text" id="formAuthor" required class="w-full border rounded-xl p-2.5 text-sm"></div>
-            <div><label class="block text-xs font-bold text-slate-700 uppercase mb-1">Rumusan / Pengajaran</label><textarea id="formSummary" rows="4" required class="w-full border rounded-xl p-2.5 text-sm"></textarea></div>
-            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow transition cursor-pointer">Hantar Rekod Bacaan (+10 Mata / +1 Bintang)</button>
-          </form>
-        </div>
-
-        <!-- PAGE 3: LOG BACAAN -->
-        <div id="stdPage3" class="hidden bg-white p-6 rounded-2xl shadow-sm border space-y-4">
-          <h3 class="text-2xl font-bold text-slate-800 border-b pb-4">Log Sejarah Bacaan Saya</h3>
-          <div class="overflow-x-auto"><table class="w-full text-left"><tbody id="stdLogTableBody" class="divide-y text-sm"></tbody></table></div>
-        </div>
-
-        <!-- PAGE 4: PROFIL PELAJAR -->
-        <div id="stdPage4" class="hidden bg-white p-6 rounded-2xl shadow-sm border space-y-6">
-          <h3 class="text-2xl font-bold text-slate-800 border-b pb-4">Profil Pelajar</h3>
-          <div class="p-4 bg-slate-50 rounded-xl"><p><strong>Nama:</strong> <span id="profileName">-</span></p><p><strong>Kelas:</strong> <span id="profileClass">-</span></p></div>
-        </div>
-      </div>
-
-      <!-- ================= PENTADBIR VIEW ================= -->
-      <div id="adminView" class="space-y-6 hidden">
-        <div class="bg-slate-900 text-white rounded-2xl shadow-md p-1.5 flex flex-wrap gap-2 text-sm font-medium">
-          <button onclick="switchAdminTab(1)" id="admBtn1" class="flex-1 py-3 px-4 rounded-xl bg-blue-600 text-white font-bold flex items-center justify-center space-x-2 transition cursor-pointer">
-            <i class="fa-solid fa-chart-line"></i><span>Rekod & Statistik</span>
-          </button>
-          <button onclick="switchAdminTab(2)" id="admBtn2" class="flex-1 py-3 px-4 rounded-xl hover:bg-slate-800 text-slate-300 flex items-center justify-center space-x-2 transition cursor-pointer">
-            <i class="fa-solid fa-trophy"></i><span>Laporan & Leaderboard</span>
-          </button>
-          <button onclick="switchAdminTab(3)" id="admBtn3" class="flex-1 py-3 px-4 rounded-xl hover:bg-slate-800 text-slate-300 flex items-center justify-center space-x-2 transition cursor-pointer">
-            <i class="fa-solid fa-users-gear"></i><span>Pengurusan Pelajar</span>
-          </button>
-        </div>
-
-        <!-- PAGE 1 ADMIN -->
-        <div id="admPage1" class="space-y-6">
-          <div class="bg-white p-6 rounded-2xl shadow-sm border space-y-4">
-            <h3 class="text-lg font-bold text-slate-800"><i class="fa-solid fa-tags text-blue-600 mr-2"></i>Pengurusan Kategori Pecahan Khas</h3>
-            <form onsubmit="handleAddCategory(event)" class="flex gap-2"><input type="text" id="inputNewCategory" required placeholder="Tambah kategori..." class="px-3.5 py-1.5 border rounded-xl text-sm"><button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold">Tambah</button></form>
-            <div class="flex flex-wrap gap-2 pt-2" id="categoryTagsContainer"></div>
-          </div>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border"><h3 class="font-bold text-slate-700 mb-4">Agihan Kategori Khas Buku</h3><div class="h-64 relative"><canvas id="admCategoryChart"></canvas></div></div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border"><h3 class="font-bold text-slate-700 mb-4">Purata Bacaan Mengikut Kelas</h3><div class="h-64 relative"><canvas id="admClassAvgChart"></canvas></div></div>
-          </div>
-        </div>
-
-        <!-- PAGE 2 ADMIN -->
-        <div id="admPage2" class="hidden bg-white p-6 rounded-2xl shadow-sm border space-y-6">
-          <h3 class="text-2xl font-bold text-slate-800 border-b pb-4">Kedudukan Murid Teraktif</h3>
-          <div class="overflow-x-auto"><table class="w-full text-left"><tbody id="leaderboardTableBody" class="divide-y text-sm"></tbody></table></div>
-        </div>
-
-        <!-- PAGE 3 ADMIN -->
-        <div id="admPage3" class="hidden bg-white p-6 rounded-2xl shadow-sm border space-y-6">
-          <h3 class="text-2xl font-bold text-slate-800 border-b pb-4">Pengurusan Profil Pelajar Mengikut Kelas</h3>
-          <div class="overflow-x-auto"><table class="w-full text-left"><tbody id="adminStudentTableBody" class="divide-y text-sm"></tbody></table></div>
-        </div>
-      </div>
-
-    </main>
-  </div>
-
-  <!-- JAVASCRIPT LOGIC -->
-  <script>
-    const defaultData = {
-      categories: ["Computer System", "Perladangan", "Elektrik", "Umum"],
-      students: [
-        { id: "KV001", name: "WHITIAN DCYETON ANAK BUNGU", class: "COMPUTER SYSTEM", points: 0, stars: 0, booksRead: 0 },
-        { id: "KV002", name: "ALEXANDER SIMON", class: "PERLADANGAN", points: 20, stars: 2, booksRead: 2 }
-      ],
-      books: []
-    };
-
-    let appData = JSON.parse(localStorage.getItem('eNilamData')) || defaultData;
-    let currentUser = null;
-    let stdCatChart = null, stdClassChart = null, admCatChart = null, admClassChart = null;
-
-    function saveData() { localStorage.setItem('eNilamData', JSON.stringify(appData)); }
-
-    function switchRole(role) {
-      const btnStudent = document.getElementById('roleBtnStudent');
-      const btnAdmin = document.getElementById('roleBtnAdmin');
-      const formStudent = document.getElementById('studentLoginForm');
-      const formAdmin = document.getElementById('adminLoginForm');
-
-      if (role === 'admin') {
-        btnAdmin.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-indigo-700 text-white shadow-sm transition cursor-pointer relative z-30";
-        btnStudent.className = "flex-1 py-2 text-sm font-bold rounded-lg text-slate-600 hover:text-blue-600 transition cursor-pointer relative z-30";
-        formStudent.classList.add('hidden');
-        formAdmin.classList.remove('hidden');
-      } else {
-        btnStudent.className = "flex-1 py-2 text-sm font-bold rounded-lg bg-blue-600 text-white shadow-sm transition cursor-pointer relative z-30";
-        btnAdmin.className = "flex-1 py-2 text-sm font-bold rounded-lg text-slate-600 hover:text-blue-600 transition cursor-pointer relative z-30";
-        formAdmin.classList.add('hidden');
-        formStudent.classList.remove('hidden');
-      }
-    }
-
-    function handleStudentLogin(e) {
-      e.preventDefault();
-      const idInput = document.getElementById('inputStudentId').value.trim().toUpperCase();
-      const student = appData.students.find(s => s.id === idInput);
-      if (student) {
-        currentUser = { role: 'student', id: student.id };
-        showAppScreen('student');
-      } else { alert("ID Pelajar tidak dijumpai!"); }
-    }
-
-    function handleAdminLogin(e) {
-      e.preventDefault();
-      const pwd = document.getElementById('inputAdminPassword').value;
-      if (pwd === 'admin123') {
-        currentUser = { role: 'admin' };
-        showAppScreen('admin');
-      } else { alert("Kata laluan Admin salah! (Gunakan: admin123)"); }
-    }
-
-    function handleLogout() {
-      currentUser = null;
-      document.getElementById('appContainer').classList.add('hidden');
-      document.getElementById('portalContainer').classList.remove('hidden');
-    }
-
-    function showAppScreen(role) {
-      document.getElementById('portalContainer').classList.add('hidden');
-      document.getElementById('appContainer').classList.remove('hidden');
-
-      if (role === 'student') {
-        document.getElementById('studentView').classList.remove('hidden');
-        document.getElementById('adminView').classList.add('hidden');
-        document.getElementById('headerStarsBadge').classList.remove('hidden');
-        switchStudentTab(1);
-        renderStudentDashboard();
-      } else {
-        document.getElementById('adminView').classList.remove('hidden');
-        document.getElementById('studentView').classList.add('hidden');
-        document.getElementById('headerStarsBadge').classList.add('hidden');
-        document.getElementById('headerUserName').innerText = "Pentadbir System";
-        document.getElementById('headerUserClass').innerText = "Mod Admin";
-        switchAdminTab(1);
-        renderAdminDashboard();
-      }
-    }
-
-    function switchStudentTab(tabNum) {
-      for (let i = 1; i <= 4; i++) document.getElementById(`stdPage${i}`).classList.add('hidden');
-      document.getElementById(`stdPage${tabNum}`).classList.remove('hidden');
-      if (tabNum === 1) initStudentCharts();
-    }
-
-    function switchAdminTab(tabNum) {
-      for (let i = 1; i <= 3; i++) document.getElementById(`admPage${i}`).classList.add('hidden');
-      document.getElementById(`admPage${tabNum}`).classList.remove('hidden');
-      if (tabNum === 1) initAdminCharts();
-      if (tabNum === 2) renderLeaderboard();
-      if (tabNum === 3) renderAdminStudentTable();
-    }
-
-    function renderStudentDashboard() {
-      const student = appData.students.find(s => s.id === currentUser.id);
-      if (!student) return;
-      document.getElementById('headerUserName').innerText = student.name;
-      document.getElementById('headerUserClass').innerText = student.class;
-      document.getElementById('headerStarsText').innerText = `${student.stars} Bintang`;
-      document.getElementById('stdWelcomeHeading').innerText = `Selamat Datang, ${student.name}!`;
-      document.getElementById('stdPointsText').innerText = student.points;
-      document.getElementById('stdStarsText').innerText = student.stars;
-      document.getElementById('stdStatMyBooks').innerText = student.booksRead;
-      document.getElementById('stdStatTotalStudents').innerText = appData.students.length;
-      document.getElementById('profileName').innerText = student.name;
-      document.getElementById('profileClass').innerText = student.class;
-
-      const catSelect = document.getElementById('formCategory');
-      catSelect.innerHTML = `<option value="">-- Pilih Kategori --</option>` + appData.categories.map(c => `<option value="${c}">${c}</option>`).join('');
-    }
-
-    function handleBookSubmit(e) {
-      e.preventDefault();
-      const student = appData.students.find(s => s.id === currentUser.id);
-      student.points += 10; student.stars += 1; student.booksRead += 1;
-      saveData();
-      renderStudentDashboard();
-      alert("Tahniah! Rekod bacaan berjaya dihantar. (+10 Mata / +1 Bintang)");
-      switchStudentTab(3);
-    }
-
-    function renderAdminDashboard() {
-      const container = document.getElementById('categoryTagsContainer');
-      container.innerHTML = appData.categories.map(cat => `<span class="bg-slate-100 border px-3 py-1 rounded-xl text-xs font-bold mr-2">${cat}</span>`).join('');
-    }
-
-    function handleAddCategory(e) {
-      e.preventDefault();
-      const val = document.getElementById('inputNewCategory').value.trim();
-      if (val && !appData.categories.includes(val)) {
-        appData.categories.push(val); saveData(); renderAdminDashboard();
-        document.getElementById('inputNewCategory').value = "";
-      }
-    }
-
-    function renderLeaderboard() {
-      const tbody = document.getElementById('leaderboardTableBody');
-      tbody.innerHTML = appData.students.map((s, idx) => `<tr class="border-b p-2"><td class="p-3 font-bold">${idx + 1}</td><td class="p-3 font-bold">${s.name}</td><td class="p-3">${s.class}</td><td class="p-3 text-blue-600 font-bold">${s.points} Mata</td></tr>`).join('');
-    }
-
-    function renderAdminStudentTable() {
-      const tbody = document.getElementById('adminStudentTableBody');
-      tbody.innerHTML = appData.students.map(s => `<tr class="border-b p-2"><td class="p-3 font-bold">${s.id}</td><td class="p-3">${s.name}</td><td class="p-3 font-bold text-blue-600">${s.points} Mata</td></tr>`).join('');
-    }
-
-    function initStudentCharts() {
-      const ctx = document.getElementById('stdCategoryChart').getContext('2d');
-      if (stdCatChart) stdCatChart.destroy();
-      stdCatChart = new Chart(ctx, { type: 'doughnut', data: { labels: appData.categories, datasets: [{ data: [1, 2, 1, 0], backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899'] }] } });
-    }
-
-    function initAdminCharts() {
-      const ctx = document.getElementById('admCategoryChart').getContext('2d');
-      if (admCatChart) admCatChart.destroy();
-      admCatChart = new Chart(ctx, { type: 'doughnut', data: { labels: appData.categories, datasets: [{ data: [1, 2, 1, 0], backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899'] }] } });
-    }
-  </script>
-</body>
-</html>
+              <div><label class="block text-xs font
